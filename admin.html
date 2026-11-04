@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Admin — Planning de la soirée</title>
-<link rel="stylesheet" href="assets/style.css?v=4">
+<link rel="stylesheet" href="assets/style.css?v=5">
+<script src="assets/commun.js?v=5"></script>
+<script>window.WEI_COMMUN = window.WEI;   /* l'ancien code de l'admin réutilise le nom WEI */</script>
 <style>
   .abtns{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
   a.ico{text-decoration:none;display:inline-block}
@@ -1246,8 +1248,34 @@ document.write('<script src="config/planning.js?t=' + Date.now() + '"><\/script>
     var f = el('<div class="adm ecol"></div>');
     f.appendChild(el('<label>Nom du shift</label>'));
     var nom = el('<input value="' + esc(s.nom) + '">');
-    nom.addEventListener("input", function(){ s.nom = nom.value; sauver(); });
+    nom.addEventListener("input", function(){ s.nom = nom.value; sauver(); majCouleur(); });
     f.appendChild(nom);
+
+    f.appendChild(el('<label>Couleur du poste</label>'));
+    var coul = el('<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
+      '<input type="color" aria-label="Couleur du poste" style="width:64px;height:44px;padding:3px;cursor:pointer">' +
+      '<button class="mini">Couleur par défaut</button><span class="meta" style="flex-basis:100%"></span></div>');
+    var ci = coul.querySelector("input"), cb = coul.querySelector("button"), cm = coul.querySelector("span");
+    function couleurDefaut(){ var C = window.WEI_COMMUN; return C && C.famille ? C.famille(s.nom).c : "#A9BCC8"; }
+    function majCouleur(){
+      var perso = state.couleurs && state.couleurs[cle(s.nom)];
+      ci.value = (perso || couleurDefaut()).toLowerCase();
+      cb.hidden = !perso;
+      var n = state.shifts.filter(function(x){ return cle(x.nom) === cle(s.nom); }).length;
+      cm.textContent = (perso ? "Couleur choisie" : "Couleur par défaut") + " · s'applique " +
+        (n > 1 ? "aux " + n + " shifts" : "au shift") + " « " + s.nom + " » : emploi du temps et cartes du site.";
+    }
+    ci.addEventListener("input", function(){
+      state.couleurs = state.couleurs || {};
+      state.couleurs[cle(s.nom)] = ci.value.toUpperCase();
+      sauver(); majCouleur();
+    });
+    cb.addEventListener("click", function(){
+      if(state.couleurs){ delete state.couleurs[cle(s.nom)]; if(!Object.keys(state.couleurs).length) delete state.couleurs; }
+      sauver(); majCouleur();
+    });
+    majCouleur();
+    f.appendChild(coul);
 
     if(state.jours.length > 1) f.appendChild(el('<label>Jour</label>'));
     var jsel = el('<select>' + state.jours.map(function(j){
