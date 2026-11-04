@@ -18,7 +18,7 @@
    ================================================================== */
 window.WEI_PLANNING = {
  "version": 3,
- "publie": "2026-11-04T14:35:22",
+ "publie": "2026-11-04T14:47:50",
  "event": {
   "nom": "Soirée Halloween",
   "lieu": ""
@@ -465,6 +465,17 @@ window.WEI_PLANNING = {
    "taches": [],
    "materiel": [],
    "referent": ""
+  },
+  "arrivee + deco bde": {
+   "mission": "",
+   "taches": [],
+   "materiel": [],
+   "referent": ""
   }
+ },
+ "couleurs": {
+  "quart d'h d'eau + ranger": "#B48CF2",
+  "briefing": "#B48CF2",
+  "entree": "#FFB000"
  }
 };
