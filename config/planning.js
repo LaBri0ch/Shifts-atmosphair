@@ -18,7 +18,7 @@
    ================================================================== */
 window.WEI_PLANNING = {
  "version": 3,
- "publie": "2026-11-04T14:25:42",
+ "publie": "2026-11-04T14:35:22",
  "event": {
   "nom": "Soirée Halloween",
   "lieu": ""
@@ -269,7 +269,7 @@ window.WEI_PLANNING = {
    "jour": "j1",
    "nom": "Bar",
    "debut": "03:00",
-   "fin": "05:00",
+   "fin": "04:00",
    "lieu": "",
    "quotas": {
     "bde": 4
@@ -392,6 +392,25 @@ window.WEI_PLANNING = {
     "referent": ""
    },
    "tous": true
+  },
+  {
+   "id": "sdv9wiz",
+   "jour": "j1",
+   "nom": "QUART D'H D'EAU + ranger",
+   "debut": "04:00",
+   "fin": "05:00",
+   "lieu": "",
+   "quotas": {
+    "bde": 1
+   },
+   "equipe": [],
+   "fiche": {
+    "mission": "",
+    "taches": [],
+    "materiel": [],
+    "referent": ""
+   },
+   "tous": true
   }
  ],
  "fiches": {
@@ -436,6 +455,12 @@ window.WEI_PLANNING = {
    "referent": ""
   },
   "briefing": {
+   "mission": "",
+   "taches": [],
+   "materiel": [],
+   "referent": ""
+  },
+  "quart d'h d'eau + ranger": {
    "mission": "",
    "taches": [],
    "materiel": [],
