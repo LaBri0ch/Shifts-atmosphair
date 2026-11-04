@@ -196,7 +196,13 @@
     ["installation","INSTALLATION","#FF8A7E"], ["rangement","RANGEMENT","#FF8A7E"]
   ];
   var PALETTE = ["#FFB000","#5FD8EE","#FF7AC6","#57E08A","#B48CF2","#6FA8FF","#FF8A7E","#E8C547"];
+  /* couleur d'un poste : celle choisie dans l'admin (config/planning.js › couleurs), sinon celle par défaut */
   function famille(nom){
+    var f = familleDefaut(nom), perso = D && D.couleurs && D.couleurs[cle(nom)];
+    if(perso && /^#[0-9a-f]{6}$/i.test(perso)) f.c = perso;
+    return f;
+  }
+  function familleDefaut(nom){
     var n = cle(nom);
     for(var i=0;i<FAMILLES.length;i++){
       var f = FAMILLES[i];
@@ -342,7 +348,9 @@
     opts = opts || {};
     var st = statut(s), m = moiId(), b = m && pers(m) ? bdeDe(pers(m).bde) : null;
     var c = el('<a class="card" href="' + lien("poste.html", {id:s.id}) + '"></a>');
-    c.style.borderLeftColor = st.c === "live" ? "var(--live)" : (opts.equipe ? "var(--line)" : (b ? b.couleur : "var(--line)"));
+    // un seul BDE : la bande de gauche prend la couleur du poste ; sinon celle de ton BDE
+    c.style.borderLeftColor = st.c === "live" ? "var(--live)" : unSeulBde() ? famille(s.nom).c :
+      (opts.equipe ? "var(--line)" : (b ? b.couleur : "var(--line)"));
     var jeResp = m && estResp(s, m);
     var h = '<div class="hd"><span class="pill ' + st.c + '">' + st.l + '</span>' +
       (jeResp ? '<span class="pill resp">RESPONSABLE</span>' : '') +
