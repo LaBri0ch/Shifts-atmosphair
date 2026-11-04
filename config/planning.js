@@ -18,9 +18,9 @@
    ================================================================== */
 window.WEI_PLANNING = {
  "version": 3,
- "publie": "2026-11-03T15:30:00",
+ "publie": "2026-11-04T14:25:42",
  "event": {
-  "nom": "Soirée BDE Atmosph'Air",
+  "nom": "Soirée Halloween",
   "lieu": ""
  },
  "bdes": [
@@ -60,149 +60,148 @@ window.WEI_PLANNING = {
  },
  "people": [
   {
-   "id": "phu66go",
-   "nom": "Alicia POLVE",
+   "id": "py48qfu",
+   "nom": "Rafael Jamet",
    "bde": "bde"
   },
   {
-   "id": "p90952p",
-   "nom": "Ambre DONNER",
+   "id": "pp71bny",
+   "nom": "Cyriaque Du Bois Hamon",
    "bde": "bde"
   },
   {
-   "id": "pafhsg2",
-   "nom": "Anjali VIAL",
+   "id": "p3ql3o4",
+   "nom": "Enora Guerineau",
    "bde": "bde"
   },
   {
-   "id": "pa5unzq",
-   "nom": "Arthur VALERY--BATAN",
+   "id": "pjzosw0",
+   "nom": "Faustine Mathieu",
    "bde": "bde"
   },
   {
-   "id": "pwwy6ev",
-   "nom": "Baptiste BORDENAVE",
+   "id": "p5wnlr1",
+   "nom": "Lylian Serre-Leonor",
    "bde": "bde"
   },
   {
-   "id": "pf98ss3",
-   "nom": "Chayma BELKOUANE",
+   "id": "p415bsn",
+   "nom": "Mehdi Chabba",
    "bde": "bde"
   },
   {
-   "id": "pjtbxx3",
-   "nom": "Cyriaque DU BOISHAMON",
+   "id": "pfs7qcq",
+   "nom": "Anjali Vial",
    "bde": "bde"
   },
   {
-   "id": "p1fz95h",
-   "nom": "Emma RENAULT",
+   "id": "pfj2pfc",
+   "nom": "Oscar Maudet",
    "bde": "bde"
   },
   {
-   "id": "p165z7q",
-   "nom": "Enora GUERINEAU",
+   "id": "pvs9bnm",
+   "nom": "Sélène Bourset",
    "bde": "bde"
   },
   {
-   "id": "p0467bo",
-   "nom": "Eric COCCOLI",
+   "id": "pnfsyvt",
+   "nom": "Lucas Cureaux",
    "bde": "bde"
   },
   {
-   "id": "pid7g14",
-   "nom": "Etienne GEMPP",
+   "id": "pq5ga82",
+   "nom": "Jeanne Drevon",
    "bde": "bde"
   },
   {
-   "id": "pj4oh34",
-   "nom": "Faustine MATHIEU",
+   "id": "pxbr5f0",
+   "nom": "Gabriel Susset",
    "bde": "bde"
   },
   {
-   "id": "p8q9zt9",
-   "nom": "Gabriel SUSSET",
+   "id": "pkdc423",
+   "nom": "Pierre Charton Lenne",
    "bde": "bde"
   },
   {
-   "id": "p64z1ms",
-   "nom": "Hadrien KIAS",
+   "id": "p4v66yf",
+   "nom": "Arthur Valery Batan",
    "bde": "bde"
   },
   {
-   "id": "pracj37",
-   "nom": "Hugo DELEMOTTE",
+   "id": "pqif869",
+   "nom": "Baptiste Bordenave",
    "bde": "bde"
   },
   {
-   "id": "p5xmq53",
-   "nom": "Jeanne DREVON",
+   "id": "paj6g1e",
+   "nom": "Emma Renault",
    "bde": "bde"
   },
   {
-   "id": "p6519cs",
-   "nom": "Lilou DURET-GUILLARD",
+   "id": "pgfqd55",
+   "nom": "Marc Poulet",
    "bde": "bde"
   },
   {
-   "id": "pu3g26q",
-   "nom": "Lou DELATTRE",
+   "id": "p4tqtsy",
+   "nom": "Quentin Lassagne",
    "bde": "bde"
   },
   {
-   "id": "p2l14er",
-   "nom": "Lucas DUPLANT",
+   "id": "pr9mdu4",
+   "nom": "Alicia Polve",
    "bde": "bde"
   },
   {
-   "id": "p5xgm0j",
-   "nom": "Lucas RENARD",
+   "id": "pgbjnng",
+   "nom": "Tristan Potier",
    "bde": "bde"
   },
   {
-   "id": "p2afa28",
-   "nom": "Marc POULET",
+   "id": "peg481m",
+   "nom": "Hadrien Kias",
    "bde": "bde"
   },
   {
-   "id": "pfmphc8",
-   "nom": "Mehdi CHABBA",
+   "id": "p1m3uri",
+   "nom": "Lucas Duplant",
    "bde": "bde"
   },
   {
-   "id": "prwjau5",
-   "nom": "Nathan KRUCH",
+   "id": "prlpswh",
+   "nom": "Ambre Donner",
    "bde": "bde"
   },
   {
-   "id": "pi8o4i6",
-   "nom": "Noemi BILLY-VALENCIA",
+   "id": "pm0yz8a",
+   "nom": "Chayma Belkouane",
    "bde": "bde"
   },
   {
-   "id": "psf0kit",
-   "nom": "Nolan BLATEAU",
+   "id": "prgp8el",
+   "nom": "Lou Delattre",
    "bde": "bde"
   },
   {
-   "id": "p60yj7m",
-   "nom": "Oscar MAUDET",
+   "id": "puhpksb",
+   "nom": "Tom Ferrus",
    "bde": "bde"
   },
   {
-   "id": "pyagyed",
-   "nom": "Pierre CHARTON--LENNE",
+   "id": "pkl4ews",
+   "nom": "Lucas Renard",
    "bde": "bde"
   },
   {
-   "id": "pwwbb64",
-   "nom": "Selene BOURSET",
+   "id": "pneqfzi",
+   "nom": "Etienne Gempp",
    "bde": "bde"
   }
  ],
  "respPool": [
-  "pracj37",
-  "pid7g14"
+  "pneqfzi"
  ],
  "shifts": [
   {
@@ -210,37 +209,39 @@ window.WEI_PLANNING = {
    "jour": "j1",
    "nom": "Bar",
    "debut": "23:00",
-   "fin": "00:30",
+   "fin": "00:00",
    "lieu": "",
    "quotas": {
-    "bde": 3
+    "bde": 4
    },
    "equipe": [
-    "pu3g26q",
-    "p1fz95h",
-    "prwjau5"
+    "prgp8el",
+    "pm0yz8a",
+    "pp71bny",
+    "pfs7qcq"
    ],
    "resps": [
-    "pracj37"
+    "pneqfzi"
    ]
   },
   {
    "id": "s3kj7n1",
    "jour": "j1",
    "nom": "Bar",
-   "debut": "00:30",
+   "debut": "01:00",
    "fin": "02:00",
    "lieu": "",
    "quotas": {
-    "bde": 3
+    "bde": 4
    },
    "equipe": [
-    "phu66go",
-    "pa5unzq",
-    "p5xmq53"
+    "py48qfu",
+    "pjzosw0",
+    "pnfsyvt",
+    "p1m3uri"
    ],
    "resps": [
-    "pid7g14"
+    "pneqfzi"
    ]
   },
   {
@@ -248,37 +249,39 @@ window.WEI_PLANNING = {
    "jour": "j1",
    "nom": "Bar",
    "debut": "02:00",
-   "fin": "03:30",
+   "fin": "03:00",
    "lieu": "",
    "quotas": {
-    "bde": 3
+    "bde": 4
    },
    "equipe": [
-    "p5xgm0j",
-    "pwwbb64",
-    "p60yj7m"
+    "pvs9bnm",
+    "p4v66yf",
+    "pfj2pfc",
+    "pkl4ews"
    ],
    "resps": [
-    "pracj37"
+    "pneqfzi"
    ]
   },
   {
    "id": "scmlc8d",
    "jour": "j1",
    "nom": "Bar",
-   "debut": "03:30",
+   "debut": "03:00",
    "fin": "05:00",
    "lieu": "",
    "quotas": {
-    "bde": 3
+    "bde": 4
    },
    "equipe": [
-    "p8q9zt9",
-    "p64z1ms",
-    "p6519cs"
+    "pqif869",
+    "pgbjnng",
+    "pq5ga82",
+    "p415bsn"
    ],
    "resps": [
-    "pid7g14"
+    "pneqfzi"
    ]
   },
   {
@@ -292,8 +295,8 @@ window.WEI_PLANNING = {
     "bde": 2
    },
    "equipe": [
-    "pfmphc8",
-    "pi8o4i6"
+    "prlpswh",
+    "paj6g1e"
    ]
   },
   {
@@ -307,8 +310,8 @@ window.WEI_PLANNING = {
     "bde": 2
    },
    "equipe": [
-    "pjtbxx3",
-    "pafhsg2"
+    "p3ql3o4",
+    "pgfqd55"
    ]
   },
   {
@@ -322,9 +325,73 @@ window.WEI_PLANNING = {
     "bde": 2
    },
    "equipe": [
-    "pwwy6ev",
-    "p2l14er"
+    "pxbr5f0",
+    "peg481m"
    ]
+  },
+  {
+   "id": "sij9iie",
+   "jour": "j1",
+   "nom": "Bar",
+   "debut": "00:00",
+   "fin": "01:00",
+   "lieu": "",
+   "quotas": {
+    "bde": 4
+   },
+   "equipe": [
+    "puhpksb",
+    "p4tqtsy",
+    "p5wnlr1",
+    "pr9mdu4"
+   ],
+   "fiche": {
+    "mission": "",
+    "taches": [],
+    "materiel": [],
+    "referent": ""
+   },
+   "resps": [
+    "pneqfzi"
+   ]
+  },
+  {
+   "id": "sy2umdp",
+   "jour": "j1",
+   "nom": "Arrivée + déco BDE",
+   "debut": "22:00",
+   "fin": "22:30",
+   "lieu": "",
+   "quotas": {
+    "bde": 1
+   },
+   "equipe": [],
+   "fiche": {
+    "mission": "",
+    "taches": [],
+    "materiel": [],
+    "referent": ""
+   },
+   "tous": true
+  },
+  {
+   "id": "sf73pcg",
+   "jour": "j1",
+   "nom": "Briefing",
+   "debut": "22:30",
+   "fin": "23:00",
+   "lieu": "",
+   "quotas": {
+    "bde": 1
+   },
+   "equipe": [],
+   "fiche": {
+    "mission": "",
+    "taches": [],
+    "materiel": [],
+    "referent": ""
+   },
+   "tous": true
   }
  ],
  "fiches": {
@@ -339,11 +406,7 @@ window.WEI_PLANNING = {
     "Signale tout comportement inquiétant (harcèlement, malaise, bagarre) à ton responsable, n'interviens jamais seul",
     "À la relève, transmets l'état des stocks et les incidents"
    ],
-   "materiel": [
-    "Gobelets",
-    "Eau",
-    "Sacs poubelle et essuie-tout"
-   ],
+   "materiel": [],
    "referent": "Ton responsable de bar (badge RESPONSABLE sur le planning). Numéros dans SOS."
   },
   "entree": {
@@ -359,6 +422,24 @@ window.WEI_PLANNING = {
     "Téléphone chargé"
    ],
    "referent": "Les responsables de la soirée. Numéros dans SOS."
+  },
+  "nouveau shift": {
+   "mission": "",
+   "taches": [],
+   "materiel": [],
+   "referent": ""
+  },
+  "arrivee bde": {
+   "mission": "",
+   "taches": [],
+   "materiel": [],
+   "referent": ""
+  },
+  "briefing": {
+   "mission": "",
+   "taches": [],
+   "materiel": [],
+   "referent": ""
   }
  }
 };
