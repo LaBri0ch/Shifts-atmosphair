@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — Planning de la soirée</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<style>
+  .abtns{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  a.ico{text-decoration:none;display:inline-block}
+  .ico.go{border-color:var(--c1);color:var(--c1)}
+  .ico.go.plein{background:var(--c1);color:#1C1608}
+  .jrow{display:grid;grid-template-columns:1fr 150px 40px;gap:8px;align-items:center;margin-bottom:6px}
+  .jrow input{padding:9px 11px;font-size:.95rem}
+  @media(max-width:430px){ .top .sync #syncT{display:inline} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1 id="topT">WEI — Shifts</h1>
+      <div class="sub" id="topS"></div>
+    </div>
+    <div class="abtns">
+      <span id="sync" class="sync" hidden><span class="sdot"></span><span id="syncT"></span></span>
+      <a class="ico" id="voir" href="index.html?apercu=1" target="_blank" rel="noopener">Voir le site</a>
+      <button class="ico go" id="enreg">Enregistrer le fichier</button>
+      <span id="topO" hidden></span><span id="topK" hidden></span><span id="topP" hidden></span>
+      <span id="topU" hidden></span><button id="topA" hidden></button>
+    </div>
+  </div>
+  <div id="app"></div>
+</div>
+<div class="dock" id="dock" hidden><div class="dockin" id="dockin"></div></div>
+<div class="toast" id="toast" hidden role="status"><span id="toastT"></span><button id="toastU">Annuler</button></div>
+
+
+<script id="planSvg" type="text/plain">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 520" width="700" height="520" font-family="Helvetica,Arial,sans-serif">
+  <rect width="700" height="520" fill="#0E1922"/>
+  <path d="M0 400 Q200 370 380 400 T700 380 L700 520 L0 520Z" fill="#12241B"/>
+  <path d="M40 0 L40 520" stroke="#2B3D49" stroke-width="26" stroke-dasharray="18 14"/>
+  <text x="10" y="270" fill="#6E8493" font-size="12" transform="rotate(-90 14,270)">Route d'accès</text>
+  <rect x="70" y="40" width="150" height="90" rx="10" fill="#16232F" stroke="#3A5060" stroke-width="2"/>
+  <text x="82" y="70" fill="#EAF2F7" font-size="15" font-weight="bold">Parking</text>
+  <text x="82" y="90" fill="#8098A8" font-size="12">Dépose des bus</text>
+  <text x="82" y="110" fill="#8098A8" font-size="12">Point de rassemblement</text>
+  <rect x="270" y="60" width="230" height="130" rx="12" fill="#1C1608" stroke="#FFB000" stroke-width="3"/>
+  <text x="290" y="95" fill="#FFB000" font-size="19" font-weight="bold">Chapiteau</text>
+  <text x="290" y="120" fill="#C9A24B" font-size="13">Bar, repas, soirées</text>
+  <text x="290" y="142" fill="#C9A24B" font-size="13">Canal 3</text>
+  <rect x="545" y="60" width="115" height="75" rx="10" fill="#1D1416" stroke="#FF6B5E" stroke-width="3"/>
+  <text x="560" y="90" fill="#FF6B5E" font-size="15" font-weight="bold">PC orga</text>
+  <text x="560" y="112" fill="#D08A84" font-size="12">Soins · 24h/24</text>
+  <rect x="70" y="200" width="180" height="120" rx="10" fill="#122A1C" stroke="#57E08A" stroke-width="2"/>
+  <text x="86" y="232" fill="#57E08A" font-size="16" font-weight="bold">Tentes A</text>
+  <text x="86" y="254" fill="#7FBF9A" font-size="12">BDE Paris</text>
+  <rect x="270" y="215" width="180" height="120" rx="10" fill="#241A18" stroke="#FF7A6B" stroke-width="2"/>
+  <text x="286" y="247" fill="#FF7A6B" font-size="16" font-weight="bold">Tentes B</text>
+  <text x="286" y="269" fill="#C58A80" font-size="12">BDE Toulouse</text>
+  <rect x="470" y="200" width="180" height="120" rx="10" fill="#10242B" stroke="#5FD8EE" stroke-width="2"/>
+  <text x="486" y="232" fill="#5FD8EE" font-size="16" font-weight="bold">Tentes C</text>
+  <text x="486" y="254" fill="#88BCC9" font-size="12">BDE Lyon</text>
+  <rect x="70" y="355" width="140" height="70" rx="10" fill="#16232F" stroke="#3A5060" stroke-width="2"/>
+  <text x="84" y="385" fill="#EAF2F7" font-size="14" font-weight="bold">Sanitaires</text>
+  <text x="84" y="405" fill="#8098A8" font-size="12">Douches · WC</text>
+  <circle cx="300" cy="395" r="34" fill="#16232F" stroke="#5FD8EE" stroke-width="2"/>
+  <text x="300" y="392" fill="#5FD8EE" font-size="12" font-weight="bold" text-anchor="middle">Point</text>
+  <text x="300" y="407" fill="#5FD8EE" font-size="12" font-weight="bold" text-anchor="middle">d'eau</text>
+  <rect x="400" y="360" width="250" height="110" rx="10" fill="#16232F" stroke="#3A5060" stroke-width="2"/>
+  <text x="418" y="392" fill="#EAF2F7" font-size="15" font-weight="bold">Grande prairie</text>
+  <text x="418" y="414" fill="#8098A8" font-size="12">Grands jeux · feu de camp</text>
+  <text x="418" y="436" fill="#8098A8" font-size="12">Zone de rassemblement en cas d'alerte</text>
+  <text x="70" y="500" fill="#5E7484" font-size="12">Plan fictif — à remplacer par le plan réel du site</text>
+</svg>
+</script>
+
+<script>
+/* le planning à modifier : config/planning.js, relu sans cache à chaque ouverture */
+document.write('<script src="config/planning.js?t=' + Date.now() + '"><\/script>');
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "wei-planning-v2";
+  var CFG = window.WEI_CONFIG || {};
+  var CONNECTE = false;   // l'admin n'écrit jamais en ligne : il produit un fichier
+  var remote = null, tmr = null, attente = null, attenteT = null;
+  var JOURS_FR = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+  var MOIS_FR = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+
+  /* ---------- état ---------- */
+  var state = null, vue = {n:"pick"}, moi = null, admin = false;
+
+  var GRAINE = null;
+  function graine(){            // les données embarquées dans la page, lues une seule fois
+    if(!GRAINE) GRAINE = JSON.parse(JSON.stringify(window.WEI_PLANNING || {}));
+    return GRAINE;
+  }
+  function seedData(){
+    var s = JSON.parse(JSON.stringify(graine()));
+    if(s.jours && s.jours.length) return s;
+    var base = new Date(); base.setHours(0,0,0,0);
+    s.jours = [0,1,2].map(function(i){
+      var d = new Date(base.getTime()); d.setDate(d.getDate() + i);
+      return {id:"j" + (i+1), nom:cap(JOURS_FR[d.getDay()]), date:iso(d)};
+    });
+    return s;
+  }
+  /* ---------- brouillon -----------------------------------------------
+     L'admin travaille sur une copie gardée dans ce navigateur. Rien ne
+     part en ligne : on enregistre config/planning.js, puis on publie ce
+     fichier sur GitHub. */
+  var CLE_BR = "wei-admin:brouillon:" + location.pathname.replace(/[^\/]*$/, "");   // un brouillon par dossier de site
+  var FICHIER = null, BASE = 0, enregistreA = null, conflit = null;
+  function propre(o){            // ce qui compte pour comparer deux versions
+    var c = JSON.parse(JSON.stringify(o || {}));
+    delete c.cles; delete c.olymp; delete c.publie; delete c.mdp; delete c.revision;
+    return JSON.stringify(c);
+  }
+  function charger(){
+    FICHIER = seedData();
+    BASE = empreinte(propre(FICHIER));
+    var br = null;
+    try{ br = JSON.parse(localStorage.getItem(CLE_BR) || "null"); }catch(e){}
+    if(br && br.etat && br.etat.shifts){
+      if(br.base === BASE || propre(br.etat) === propre(FICHIER)) return br.etat;
+      conflit = br;               // le fichier a changé depuis ce brouillon : on demande
+    }
+    return JSON.parse(JSON.stringify(FICHIER));
+  }
+  function modifie(){ return !!state && propre(state) !== propre(FICHIER); }
+  function sauver(){
+    try{ localStorage.setItem(CLE_BR, JSON.stringify({base:BASE, etat:state, maj:Date.now()})); }catch(e){}
+    etatBrouillon();
+  }
+  function etatBrouillon(){
+    if(!state) return;
+    var m = modifie(), b = document.getElementById("enreg");
+    if(m) badge("warn", "NON ENREGISTRÉ");
+    else if(enregistreA) badge("ok", "ENREGISTRÉ " + enregistreA + " · À PUBLIER");
+    else badge("ok", "IDENTIQUE AU FICHIER");
+    if(b) b.className = "ico go" + (m ? " plein" : "");
+  }
+
+  /* pont avec la couche de synchronisation (voir le module en bas de page) */
+  function badge(cls, txt){
+    var b = document.getElementById("sync");
+    if(!b) return;
+    b.hidden = false;
+    b.className = "sync" + (cls ? " " + cls : "");
+    document.getElementById("syncT").textContent = txt;
+  }
+  function saisieEnCours(){
+    var a = document.activeElement;
+    return !!(a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA"));
+  }
+  window.WEI = {
+    connect: function(api){ remote = api; },
+    seedRemote: function(){ if(remote) remote.push(state); },
+    receive: function(json){
+      var s;
+      try{ s = JSON.parse(json); }catch(e){ return; }
+      if(!s || !s.shifts || !s.people) return;
+      if(saisieEnCours()){                    // ne pas effacer une saisie en cours
+        attente = json;
+        clearTimeout(attenteT);
+        attenteT = setTimeout(function(){
+          var j = attente; attente = null;
+          if(j) window.WEI.receive(j);
+        }, 2500);
+        return;
+      }
+      attente = null;
+      s.cles = state.cles || {};             // clés et olympiades sont synchronisées à part
+      s.olymp = state.olymp || {};
+      state = s;
+      defauts();
+      render();
+    },
+    recevoirCles: function(obj){
+      state.cles = obj || {};
+      if(vue.n === "cles" && rafraichirCles) rafraichirCles();
+      else if(vue.n === "reglages" && !saisieEnCours()) render();
+    },
+    recevoirOlymp: function(obj){
+      state.olymp = obj || {};
+      if(vue.n === "olymp" && rafraichirOlymp) rafraichirOlymp();
+    },
+    statut: function(code, info){
+      if(code === "ok") badge("ok", "EN DIRECT");
+      else if(code === "ko") badge("ko", "HORS LIGNE" + (info ? " · " + info : ""));
+      else badge("", "LOCAL");
+    }
+  };
+  function memo(k, v){
+    try{ if(v === undefined) return localStorage.getItem(KEY + ":" + k);
+         localStorage.setItem(KEY + ":" + k, v); }catch(e){ return null; }
+  }
+
+  /* ---------- utilitaires ---------- */
+  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+  function iso(d){
+    return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+  }
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function el(html){ var d = document.createElement("div"); d.innerHTML = html; return d.firstElementChild; }
+  function uid(p){ return p + Math.random().toString(36).slice(2,8); }
+  function empreinte(s){
+    var v = 5381;
+    for(var i=0;i<s.length;i++){ v = ((v<<5) + v + s.charCodeAt(i)) >>> 0; }
+    return v;
+  }
+  function defauts(){
+    if(!state.urgences) state.urgences = {numeros:[], canaux:[], consigne:""};
+    if(!state.urgences.numeros) state.urgences.numeros = [];
+    if(!state.urgences.canaux) state.urgences.canaux = [];
+    if(!state.plan) state.plan = {src:"", legende:""};
+    if(!state.cles) state.cles = {};
+    if(!state.olymp) state.olymp = {};
+    delete state.nuitContinue;   // une soirée : pas d'arbitrage entre deux nuits
+    if(!state.fiches) state.fiches = {};
+    var fg = graine().fiches || {};
+    Object.keys(fg).forEach(function(k){
+      var f = state.fiches[k];
+      if(!f || (!f.mission && !(f.taches || []).length && !(f.materiel || []).length && !f.referent)){
+        if(fg[k] && (fg[k].mission || (fg[k].taches || []).length)) state.fiches[k] = fg[k];
+      }
+    });
+  }
+  function telLien(t){ return "tel:" + String(t).replace(/[^+0-9]/g,""); }
+  function telAff(t){
+    var v = String(t).replace(/\s/g,"");
+    return /^0[0-9]{9}$/.test(v) ? v.replace(/(..)(?=.)/g,"$1 ").trim() : t;
+  }
+
+  /* --- bloc urgences, grand format --- */
+  function sosGrand(){
+    var u = state.urgences;
+    if(!u.numeros.length && !u.canaux.length) return null;
+    var d = el('<div class="sos-big"><h3>EN CAS D\'URGENCE</h3></div>');
+    u.numeros.forEach(function(n, i){
+      d.appendChild(el('<a class="tel' + (i === 0 ? ' first' : '') + '" href="' + telLien(n.tel) + '">' +
+        '<span>' + esc(n.quoi) + '</span><b>' + esc(telAff(n.tel)) + '</b></a>'));
+    });
+    if(u.canaux.length){
+      var c = el('<div class="canaux"></div>');
+      u.canaux.forEach(function(k){
+        c.appendChild(el('<div class="can"><b>' + esc(k.quoi) + '</b><span>' + esc(k.role) + '</span></div>'));
+      });
+      d.appendChild(c);
+    }
+    if(u.consigne) d.appendChild(el('<p class="csg">' + esc(u.consigne) + '</p>'));
+    return d;
+  }
+
+  /* --- rappel discret en bas des autres pages --- */
+  function sosPetit(){
+    var u = state.urgences;
+    if(!u.numeros.length) return null;
+    var d = el('<div class="sos-mini"></div>');
+    u.numeros.slice(0,2).forEach(function(n){
+      d.appendChild(el('<a href="' + telLien(n.tel) + '">' + esc(n.quoi.split(" —")[0]) +
+        ' <b>' + esc(telAff(n.tel)) + '</b></a>'));
+    });
+    var p = el('<a href="#">Tous les numéros</a>');
+    p.addEventListener("click", function(e){ e.preventDefault(); go("sos"); });
+    d.appendChild(p);
+    return d;
+  }
+
+  function jourDe(id){
+    for(var i=0;i<state.jours.length;i++) if(state.jours[i].id === id) return state.jours[i];
+    return null;
+  }
+  function bdeDe(id){
+    for(var i=0;i<state.bdes.length;i++) if(state.bdes[i].id === id) return state.bdes[i];
+    return {id:id, nom:id, court:"?", couleur:"#8098A8"};
+  }
+  function pers(id){
+    for(var i=0;i<state.people.length;i++) if(state.people[i].id === id) return state.people[i];
+    return null;
+  }
+  function shift(id){
+    for(var i=0;i<state.shifts.length;i++) if(state.shifts[i].id === id) return state.shifts[i];
+    return null;
+  }
+  function dateLabel(j){
+    var p = j.date.split("-");
+    return +p[2] + " " + MOIS_FR[+p[1]-1];
+  }
+  function coupure(){ return state.coupure == null ? 6 : state.coupure; }
+  function debutDe(s){
+    var j = jourDe(s.jour); if(!j) return null;
+    var p = j.date.split("-"), h = s.debut.split(":");
+    var d = new Date(+p[0], +p[1]-1, +p[2], +h[0], +h[1], 0, 0);
+    if(+h[0] < coupure()) d.setDate(d.getDate() + 1);   // 02h00 le vendredi = la nuit de vendredi à samedi
+    return d;
+  }
+  /* date « festival » : jusqu'à 6 h du matin, on est encore la veille */
+  function dateFestival(){
+    var d = new Date(Date.now() - coupure()*3600000);
+    return iso(d);
+  }
+  function finDe(s){
+    var d = debutDe(s); if(!d) return null;
+    var h = s.fin.split(":"), f = new Date(d.getTime());
+    f.setHours(+h[0], +h[1], 0, 0);
+    if(f <= d) f.setDate(f.getDate() + 1);   // shift qui passe minuit
+    return f;
+  }
+  function statut(s){
+    var d = debutDe(s), f = finDe(s), now = new Date();
+    if(!d) return {c:"", l:""};
+    if(now >= d && now < f) return {c:"live", l:"EN COURS"};
+    if(now >= f) return {c:"done", l:"TERMINÉ"};
+    var min = Math.round((d - now)/60000);
+    if(min <= 90) return {c:"soon", l:"DANS " + (min < 60 ? min + " MIN" : Math.round(min/60) + " H")};
+    return {c:"", l:"À VENIR"};
+  }
+  function triShifts(a,b){
+    var da = debutDe(a), db2 = debutDe(b);
+    return (da && db2) ? da - db2 : 0;
+  }
+  function shiftsDuJour(jid){
+    return state.shifts.filter(function(s){ return s.jour === jid; }).sort(triShifts);
+  }
+  function respsDe(s){ return s.resps || []; }
+  function estResp(s, pid){ return respsDe(s).indexOf(pid) > -1; }
+  function estSur(s, pid){ return s.equipe.indexOf(pid) > -1 || estResp(s, pid); }
+  function mesShifts(pid){
+    return state.shifts.filter(function(s){ return s.tous || estSur(s, pid); }).sort(triShifts);
+  }
+  function mesAffectations(pid){   // hors moments collectifs, pour les compteurs
+    return state.shifts.filter(function(s){ return !s.tous && estSur(s, pid); });
+  }
+  function court(nom){             // « Hugo DELEMOTTE » -> « Hugo D. »
+    var t = String(nom).split(" ");
+    return t.length > 1 ? t[0] + " " + t[1].charAt(0) + "." : nom;
+  }
+  function jourAujourdhui(){
+    var t = dateFestival();
+    for(var i=0;i<state.jours.length;i++) if(state.jours[i].date === t) return state.jours[i].id;
+    return null;
+  }
+  function compte(s, bid){
+    return s.equipe.filter(function(pid){ var p = pers(pid); return p && p.bde === bid; }).length;
+  }
+  function manque(s){
+    if(s.tous) return 0;
+    if(s.total) return Math.max(0, s.total - s.equipe.length);
+    var m = 0;
+    state.bdes.forEach(function(b){ m += Math.max(0, (s.quotas[b.id]||0) - compte(s, b.id)); });
+    return m;
+  }
+  function pastillesQuota(s){
+    if(s.tous) return '<span class="qz">Tous les BDE</span>';
+    if(s.total) return '<span class="qz' + (s.equipe.length < s.total ? ' ko' : '') + '">Sans répartition ' +
+                       s.equipe.length + '/' + s.total + '</span>';
+    return state.bdes.map(function(b){
+      var c = compte(s, b.id), n = s.quotas[b.id] || 0;
+      return '<span class="qz' + (c < n ? ' ko' : '') + '" style="border-left:4px solid ' + b.couleur +
+             '">' + b.court + ' ' + c + '/' + n + '</span>';
+    }).join("");
+  }
+
+  /* fiches communes à tous les shifts d'un même poste */
+  function cle(nom){
+    return String(nom).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim();
+  }
+  function ficheDe(s){
+    state.fiches = state.fiches || {};
+    return state.fiches[cle(s.nom)] || s.fiche || {};
+  }
+  function ficheVide(f){
+    return !(f.mission || (f.taches && f.taches.length) || (f.materiel && f.materiel.length) || f.referent);
+  }
+
+  /* ---------- rendu ---------- */
+  var app = document.getElementById("app");
+  var dock = document.getElementById("dock"), dockin = document.getElementById("dockin");
+  var topT = document.getElementById("topT"), topS = document.getElementById("topS");
+  var topA = document.getElementById("topA");
+
+  function go(n, p){ vue = {n:n, p:p}; render(); window.scrollTo(0,0); }
+
+  function render(){
+    var estAdmin = (vue.n === "admin" || vue.n === "edit" || vue.n === "reglages" || vue.n === "conflit");
+    document.body.setAttribute("data-mode", estAdmin ? "admin" : "user");
+    topT.textContent = state.event.nom;
+    topS.textContent = "Admin · copie de travail sur cet ordinateur";
+    topA.textContent = estAdmin ? "Quitter l'admin" : "Admin";
+    dock.hidden = true; dockin.innerHTML = "";
+    app.innerHTML = "";
+    rafraichirCles = null;
+    document.getElementById("topK").hidden = !(admin || gereCles(moi));
+    document.getElementById("topO").hidden = !(admin || gereOlymp(moi));
+    ({pick:vPick, me:vMoi, fiche:vFiche, planning:vPlanning, plan:vPlan, sos:vSos, cles:vCles, tableau:vTableau,
+      gate:vGate, admin:vAdmin, edit:vEdit, reglages:vReglages, olymp:vOlymp, conflit:vConflit}[vue.n] || vPick)();
+    if(!estAdmin && vue.n !== "sos" && vue.n !== "pick" && vue.n !== "me"){
+      var mini = sosPetit(); if(mini) app.appendChild(mini);
+    }
+  }
+
+  /* --- choix de l'identité --- */
+  function vPick(){
+    var bid = vue.p && vue.p.bde;
+    if(!bid){
+      app.appendChild(el('<h2 class="lead">Ton nom est dans quel BDE ?</h2>'));
+      app.appendChild(el('<p>Tu ne le choisis qu\'une fois, la page s\'en souvient ensuite.</p>'));
+      var g = el('<div class="bdegrid"></div>');
+      state.bdes.forEach(function(b){
+        var n = state.people.filter(function(p){ return p.bde === b.id; }).length;
+        var c = el('<button class="bdecard" style="border-left-color:' + b.couleur + '">' +
+                   esc(b.nom) + '<span>' + n + ' personnes</span></button>');
+        c.addEventListener("click", function(){ go("pick", {bde:b.id}); });
+        g.appendChild(c);
+      });
+      app.appendChild(g);
+      var pl = el('<button class="btn ghost">Voir le planning général</button>');
+      pl.addEventListener("click", function(){ go("planning"); });
+      app.appendChild(pl);
+      var sg = sosGrand(); if(sg){ app.appendChild(el('<div style="height:20px"></div>')); app.appendChild(sg); }
+      return;
+    }
+    var b = bdeDe(bid);
+    app.appendChild(el('<h2 class="lead">' + esc(b.nom) + '</h2>'));
+    app.appendChild(el('<p>Touche ton nom.</p>'));
+    var f = el('<input type="search" placeholder="Chercher un nom" aria-label="Chercher un nom">');
+    app.appendChild(f);
+    var list = el('<div class="people"></div>');
+    app.appendChild(list);
+    function fill(){
+      var q = f.value.trim().toUpperCase();
+      list.innerHTML = "";
+      state.people.filter(function(p){ return p.bde === bid; })
+        .sort(function(x,y){ return x.nom.localeCompare(y.nom, "fr"); })
+        .forEach(function(p){
+          if(q && p.nom.toUpperCase().indexOf(q) === -1) return;
+          var btn = el('<button class="pbtn"><span class="pip" style="background:' + b.couleur +
+                       '"></span>' + esc(p.nom) + '</button>');
+          btn.addEventListener("click", function(){ moi = p.id; memo("moi", p.id); go("me"); });
+          list.appendChild(btn);
+        });
+    }
+    f.addEventListener("input", fill); fill();
+    var back = el('<button class="btn ghost">Changer de BDE</button>');
+    back.addEventListener("click", function(){ go("pick"); });
+    app.appendChild(back);
+  }
+
+  /* --- ma page --- */
+  function vMoi(){
+    var p = pers(moi);
+    if(!p){ go("pick"); return; }
+    var b = bdeDe(p.bde);
+    app.appendChild(el('<h2 class="lead">' + esc(p.nom) + '</h2>'));
+    app.appendChild(el('<p style="color:' + b.couleur + ';font-weight:700">' + esc(b.nom) + '</p>'));
+
+    var tous = mesShifts(moi);
+    var jid = (vue.p && vue.p.jour) || jourAujourdhui() || (state.jours[0] && state.jours[0].id);
+
+    var h = resume(moi);
+    if(h) app.appendChild(h);
+    var av = avant(); if(av) app.appendChild(av);
+    app.appendChild(onglets(jid, function(id){ go("me", {jour:id}); }));
+
+    var duJour = tous.filter(function(s){ return s.jour === jid; });
+    if(!duJour.length){
+      app.appendChild(el('<div class="none"><b>Aucun shift ce jour-là</b>' +
+        (tous.length ? 'Tu as ' + tous.length + ' shift' + (tous.length>1?'s':'') + ' sur le week-end, regarde les autres jours.'
+                     : 'Tu n\'es sur aucun shift pour le moment.') + '</div>'));
+    } else {
+      duJour.forEach(function(s){ app.appendChild(carte(s, true)); });
+    }
+
+    var sg = sosGrand();
+    if(sg){ app.appendChild(el('<div style="height:8px"></div>')); app.appendChild(sg); }
+
+    dock.hidden = false;
+    var pl = el('<button class="dbtn">Planning du jour</button>');
+    pl.addEventListener("click", function(){ go("planning", {jour:jid}); });
+    var ch = el('<button class="dbtn alt">Pas moi</button>');
+    ch.addEventListener("click", function(){ moi = null; memo("moi",""); go("pick"); });
+    dockin.appendChild(pl); dockin.appendChild(ch);
+  }
+
+  /* bandeau du haut : ce qui se passe maintenant, ou le prochain shift */
+  function resume(pid){
+    var now = new Date(), enc = null, nxt = null;
+    mesShifts(pid).forEach(function(s){
+      var d = debutDe(s), f = finDe(s);
+      if(!d) return;
+      if(now >= d && now < f){ if(!enc) enc = s; }
+      else if(d > now && (!nxt || d < debutDe(nxt))) nxt = s;
+    });
+    if(enc){
+      var b = el('<button class="hero on"><span class="k">EN CE MOMENT</span>' +
+        '<div class="v">' + esc(enc.nom) + '</div>' +
+        '<div class="w">jusqu\'à ' + enc.fin + (enc.lieu ? ' · ' + esc(enc.lieu) : '') + '</div></button>');
+      b.addEventListener("click", function(){ go("fiche", {id:enc.id}); });
+      return b;
+    }
+    if(nxt){
+      var d = debutDe(nxt), min = Math.round((d - now)/60000), q;
+      if(min < 60) q = "dans " + min + " min";
+      else if(min < 600) q = "dans " + Math.floor(min/60) + " h " + (min%60 ? (min%60) + " min" : "");
+      else { var j = jourDe(nxt.jour); q = (j ? j.nom.toLowerCase() + " " : "") + "à " + nxt.debut; }
+      var c = el('<button class="hero"><span class="k">PROCHAIN SHIFT</span>' +
+        '<div class="v">' + esc(nxt.nom) + '</div>' +
+        '<div class="w">' + q + ' · ' + nxt.debut + ' → ' + nxt.fin +
+        (nxt.lieu ? ' · ' + esc(nxt.lieu) : '') + '</div></button>');
+      c.addEventListener("click", function(){ go("fiche", {id:nxt.id}); });
+      return c;
+    }
+    return null;
+  }
+
+  function onglets(jid, cb){
+    var d = el('<div class="days"></div>');
+    var today = dateFestival();
+    state.jours.forEach(function(j){
+      var t = el('<button class="day' + (j.id === jid ? ' on' : '') + '">' +
+                 '<span class="tag">' + (j.date === today ? "AUJOURD'HUI" : dateLabel(j)) + '</span>' +
+                 esc(j.nom) + '</button>');
+      t.addEventListener("click", function(){ cb(j.id); });
+      d.appendChild(t);
+    });
+    return d;
+  }
+
+  function avant(){
+    if(jourAujourdhui() || !state.jours.length) return null;
+    var j = state.jours[0], p = j.date.split("-");
+    var d0 = new Date(+p[0], +p[1]-1, +p[2]), now = new Date();
+    now.setHours(0,0,0,0);
+    var n = Math.round((d0 - now)/86400000);
+    if(n < 0) return el('<p class="meta">Le week-end est terminé.</p>');
+    return el('<p class="meta">Ça commence ' + (n === 0 ? "aujourd'hui" : n === 1 ? "demain" :
+      'dans ' + n + ' jours') + ', le ' + esc(j.nom.toLowerCase()) + ' ' + dateLabel(j) + '.</p>');
+  }
+
+  function carte(s, cliquable){
+    var st = statut(s), b = null;
+    var c = el('<button class="card"></button>');
+    if(moi){ var p = pers(moi); if(p) b = bdeDe(p.bde); }
+    c.style.borderLeftColor = st.c === "live" ? "var(--live)" : (b ? b.couleur : "var(--line)");
+    var jeResp = moi && estResp(s, moi);
+    var autres = s.equipe.length + respsDe(s).length - (moi && estSur(s, moi) ? 1 : 0);
+    var qui = s.tous ? 'Tous les BDE' :
+              (autres > 0 ? 'Avec ' + autres + ' autre' + (autres>1?'s':'') : 'Seul sur ce poste');
+    c.innerHTML =
+      '<div class="hd"><span class="pill ' + st.c + '">' + st.l + '</span>' +
+      (jeResp ? '<span class="pill resp">RESPONSABLE</span>' : '') +
+      (s.lieu ? '<span class="meta">' + esc(s.lieu) + '</span>' : '') + '</div>' +
+      '<h3>' + esc(s.nom) + '</h3>' +
+      '<div class="hours">' + s.debut + ' <span class="ar">→</span> ' + s.fin + '</div>' +
+      '<div class="meta">' + qui + '</div>' +
+      (s.note ? '<div class="snote">' + esc(s.note) + '</div>' : '') +
+      (cliquable ? '<div class="more">Voir la fiche de poste →</div>' : '');
+    if(cliquable) c.addEventListener("click", function(){ go("fiche", {id:s.id}); });
+    return c;
+  }
+
+  /* --- fiche de poste --- */
+  function vFiche(){
+    var s = shift(vue.p && vue.p.id);
+    if(!s){ go("me"); return; }
+    var j = jourDe(s.jour), st = statut(s), f = ficheDe(s);
+    var back = el('<button class="lnk sticky-back">← Retour</button>');
+    back.addEventListener("click", function(){ go("edit", {id:s.id}); });
+    app.appendChild(back);
+    app.appendChild(el('<h2 class="fh">' + esc(s.nom) + '</h2>'));
+    app.appendChild(el('<p class="meta">' + (j ? esc(j.nom) + ' ' + dateLabel(j) : '') +
+      ' · ' + s.debut + ' → ' + s.fin + (s.lieu ? ' · ' + esc(s.lieu) : '') + '</p>'));
+    app.appendChild(el('<div style="margin-top:10px"><span class="pill ' + st.c + '">' + st.l + '</span></div>'));
+
+    if(s.note) app.appendChild(el('<div class="snote big">' + esc(s.note) + '</div>'));
+    if(estPosteCles(s)){
+      var ok = el('<button class="btn go" style="margin-top:14px">Ouvrir les clés des bungalows</button>');
+      ok.addEventListener("click", function(){ go("cles"); });
+      app.appendChild(ok);
+    }
+    if(estPosteOlymp(s)){
+      var oe = epreuveDuShift(s);
+      var jeu = oe ? (oly().jeux.filter(function(x){ return x.k === oe; })[0] || null) : null;
+      if(jeu) app.appendChild(el('<div class="snote big">Épreuve : <b>' + esc(jeu.name) + '</b> · ' +
+        esc(jeu.who) + ' · ' + esc(jeu.matches) + '</div>'));
+      var ob = el('<button class="btn go" style="margin-top:14px">' +
+        (jeu ? 'Règles et tableau des Olympiades' : 'Ouvrir les Olympiades') + '</button>');
+      ob.addEventListener("click", function(){
+        if(jeu){ sectionOlymp = "epreuves"; epreuveOuverte = jeu.k; }
+        else { sectionOlymp = "deroule"; epreuveOuverte = null; }
+        go("olymp");
+      });
+      app.appendChild(ob);
+    }
+    if(ficheVide(f)) app.appendChild(el('<div class="fsec"><h4>Fiche de poste</h4>' +
+      '<p class="meta">Pas encore rédigée. Demande à ton responsable de shift ce qui est attendu.</p></div>'));
+    if(f.mission) app.appendChild(el('<div class="fsec"><h4>Ta mission</h4><p>' + esc(f.mission) + '</p></div>'));
+    if(f.taches && f.taches.length)
+      app.appendChild(el('<div class="fsec"><h4>Ce que tu fais</h4><ul>' +
+        f.taches.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join("") + '</ul></div>'));
+    if(f.materiel && f.materiel.length)
+      app.appendChild(el('<div class="fsec"><h4>Matériel</h4><ul>' +
+        f.materiel.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join("") + '</ul></div>'));
+    if(f.referent) app.appendChild(el('<div class="fsec"><h4>En cas de problème</h4><p>' + esc(f.referent) + '</p></div>'));
+
+    if(s.tous){
+      app.appendChild(el('<div class="fsec"><h4>Qui</h4><p>Tous les membres des BDE.</p></div>'));
+      return;
+    }
+    if(moi && estResp(s, moi)) app.appendChild(el('<div class="snote big" style="border-left-color:var(--alert)">' +
+      'Tu es responsable de ce shift : tu encadres l\'équipe et tu es le relais du PC orga.</div>'));
+    var eq = el('<div class="fsec"><h4>L\'équipe du shift</h4><div class="team"></div></div>');
+    var box = eq.querySelector(".team");
+    respsDe(s).concat(s.equipe).forEach(function(pid, i){
+      var p = pers(pid); if(!p) return;
+      var b = bdeDe(p.bde), r = i < respsDe(s).length;
+      box.appendChild(el('<span class="tm' + (r ? ' rsp' : '') + '"><span class="pip" style="background:' + b.couleur + '"></span>' +
+        esc(p.nom) + (pid === moi ? ' (toi)' : '') + (r ? ' <em>resp.</em>' : '') + '</span>'));
+    });
+    if(!s.equipe.length && !respsDe(s).length) box.appendChild(el('<span class="meta">Personne pour l\'instant.</span>'));
+    app.appendChild(eq);
+  }
+
+  /* --- planning général --- */
+  function vPlanning(){
+    var jid = (vue.p && vue.p.jour) || jourAujourdhui() || (state.jours[0] && state.jours[0].id);
+    var back = el('<button class="lnk">← Retour</button>');
+    back.addEventListener("click", function(){ moi ? go("me", {jour:jid}) : go("pick"); });
+    app.appendChild(back);
+    app.appendChild(el('<h2 class="lead">Planning du jour</h2>'));
+    app.appendChild(onglets(jid, function(id){ go("planning", {jour:id}); }));
+    var l = shiftsDuJour(jid);
+    if(!l.length){ app.appendChild(el('<div class="none"><b>Rien de prévu</b>Aucun shift ce jour-là.</div>')); return; }
+    var dernierCodeP = null;
+    l.forEach(function(s){
+      if(s.code && s.code !== dernierCodeP){
+        dernierCodeP = s.code;
+        app.appendChild(el('<div class="grh" style="margin-top:18px"><b>' + s.debut + '</b>' + esc(s.code) + '</div>'));
+      }
+      var st = statut(s);
+      var c = el('<button class="card"></button>');
+      c.style.borderLeftColor = st.c === "live" ? "var(--live)" : "var(--line)";
+      var nr = respsDe(s).length;
+      var noms = respsDe(s).concat(s.equipe).map(function(pid, i){
+        var p = pers(pid); if(!p) return "";
+        return '<span class="tm' + (i < nr ? ' rsp' : '') + '"><span class="pip" style="background:' + bdeDe(p.bde).couleur + '"></span>' +
+               esc(p.nom) + (i < nr ? ' <em>resp.</em>' : '') + '</span>';
+      }).join("");
+      c.innerHTML = '<div class="hd"><span class="pill ' + st.c + '">' + st.l + '</span>' +
+        (s.lieu ? '<span class="meta">' + esc(s.lieu) + '</span>' : '') + '</div>' +
+        '<h3>' + esc(s.nom) + '</h3>' +
+        '<div class="hours">' + s.debut + ' <span class="ar">→</span> ' + s.fin + '</div>' +
+        '<div class="team" style="margin-top:8px">' + (s.tous ? '<span class="meta">Tous les BDE</span>' :
+          (noms || '<span class="meta">Personne</span>')) + '</div>' +
+        '<div class="more">Voir la fiche de poste →</div>';
+      c.addEventListener("click", function(){ go("fiche", {id:s.id}); });
+      app.appendChild(c);
+    });
+  }
+
+  /* --- plan du camping --- */
+  var zoom = 1;
+  function vPlan(){
+    var back = el('<button class="lnk sticky-back">← Retour</button>');
+    back.addEventListener("click", retour);
+    app.appendChild(back);
+    app.appendChild(el('<h2 class="lead">Plan du camping</h2>'));
+    if(state.plan.legende) app.appendChild(el('<p class="meta">' + esc(state.plan.legende) + '</p>'));
+
+    var box = el('<div class="planbox"></div>');
+    var inner;
+    if(state.plan.src){
+      inner = el('<img alt="Plan du camping" width="' + (state.plan.w || 700) +
+                 '" src="' + esc(state.plan.src) + '">');
+      inner.addEventListener("error", function(){
+        box.innerHTML = "";
+        box.appendChild(el('<p class="meta" style="padding:16px">Le plan n\'a pas pu être chargé. ' +
+          'Vérifie le nom du fichier dans l\'admin.</p>'));
+      });
+    } else {
+      inner = el(document.getElementById("planSvg").textContent.trim());
+    }
+    box.appendChild(inner);
+    app.appendChild(box);
+
+    var base = parseFloat(inner.getAttribute("width")) || 700;
+    function applique(){
+      inner.style.width = Math.round(base * zoom) + "px";
+      inner.removeAttribute("height");
+      lvl.textContent = Math.round(zoom * 100) + " %";
+    }
+    var z = el('<div class="zoom"></div>');
+    var moins = el('<button aria-label="Dézoomer">−</button>');
+    var plus = el('<button aria-label="Zoomer">+</button>');
+    var fit = el('<button style="min-width:auto;padding:0 14px;font-size:.85rem">Ajuster</button>');
+    var lvl = el('<span class="lvl"></span>');
+    moins.addEventListener("click", function(){ zoom = Math.max(0.5, zoom - 0.25); applique(); });
+    plus.addEventListener("click", function(){ zoom = Math.min(4, zoom + 0.25); applique(); });
+    fit.addEventListener("click", function(){
+      zoom = Math.max(0.4, (box.clientWidth - 24) / base); applique();
+    });
+    z.appendChild(moins); z.appendChild(plus); z.appendChild(fit); z.appendChild(lvl);
+    app.appendChild(z);
+    app.appendChild(el('<p class="meta" style="margin-top:8px">Tu peux aussi zoomer à deux doigts et ' +
+      'faire glisser le plan.</p>'));
+    zoom = Math.max(0.4, Math.min(1, (Math.min(window.innerWidth, 620) - 60) / base));
+    applique();
+  }
+
+  /* --- tous les numéros --- */
+  function vSos(){
+    var back = el('<button class="lnk sticky-back">← Retour</button>');
+    back.addEventListener("click", retour);
+    app.appendChild(back);
+    app.appendChild(el('<h2 class="lead">Urgences</h2>'));
+    var g = sosGrand();
+    if(g) app.appendChild(g);
+    else app.appendChild(el('<div class="none"><b>Aucun numéro enregistré</b>À remplir dans l\'admin.</div>'));
+  }
+
+  function retour(){ go("admin"); }
+
+  /* ---------- bungalows et clés ----------------------------------------
+     La liste des bungalows (numéro + responsable) fait partie du planning.
+     L'état des clés est stocké à part, bungalow par bungalow : deux
+     personnes peuvent remettre des clés en même temps sans s'écraser. */
+  var rafraichirCles = null, filtreCles = "tous", rechercheCles = "";
+  function estPosteCles(sh){ return /cl[eé]s/i.test(sh.nom); }
+  function gereCles(pid){
+    return !!pid && mesAffectations(pid).some(estPosteCles);
+  }
+  function triNum(a, b){
+    var x = parseFloat(a.num), y = parseFloat(b.num);
+    if(!isNaN(x) && !isNaN(y) && x !== y) return x - y;
+    return String(a.num).localeCompare(String(b.num), "fr", {numeric:true});
+  }
+  function etatCle(num){ return (state.cles || {})[String(num)] || null; }
+  function signature(){ var p = moi && pers(moi); return p ? court(p.nom) : (admin ? "Orga" : "?"); }
+  function heureCourte(t){
+    var d = new Date(t);
+    return ["dim.","lun.","mar.","mer.","jeu.","ven.","sam."][d.getDay()] + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+  var rafraichirOlymp = null;
+  function majOlymp(k, val){
+    if(CONNECTE && !remote){ alert("Connexion au serveur en cours, réessaie dans quelques secondes."); return false; }
+    state.olymp = state.olymp || {};
+    if(val) state.olymp[k] = val; else delete state.olymp[k];
+    if(CONNECTE) remote.pushOlymp(k, val);
+    else sauver();
+    return true;
+  }
+  function majCle(num, val){
+    num = String(num);
+    if(CONNECTE && !remote){ alert("Connexion au serveur en cours, réessaie dans quelques secondes."); return false; }
+    state.cles = state.cles || {};
+    if(val) state.cles[num] = val; else delete state.cles[num];
+    if(CONNECTE) remote.pushCle(num, val);
+    else sauver();
+    return true;
+  }
+
+  function vCles(){
+    var tete = el('<div></div>');
+    var b0 = el('<button class="lnk sticky-back">← Retour</button>');
+    b0.addEventListener("click", function(){ admin && !moi ? go("admin") : retour(); });
+    tete.appendChild(b0);
+    tete.appendChild(el('<h2 class="lead">Clés des bungalows</h2>'));
+    app.appendChild(tete);
+
+    var bgs = (state.bungalows || []).slice().sort(triNum);
+    if(!bgs.length){
+      app.appendChild(el('<div class="none"><b>Aucun bungalow enregistré</b>' +
+        'L\'orga les ajoute dans Admin → Personnes, BDE et données → Bungalows.</div>'));
+      return;
+    }
+    var stats = el('<div class="kstats"></div>');
+    var q = el('<input type="search" placeholder="Numéro de bungalow ou nom du responsable" aria-label="Chercher un bungalow">');
+    q.value = rechercheCles;
+    var fil = el('<div class="kfil"></div>');
+    var liste = el('<div></div>');
+    app.appendChild(stats); app.appendChild(q); app.appendChild(fil); app.appendChild(liste);
+
+    [["tous","Tous"],["a","À remettre"],["remise","Remises"],["rendue","Rendues"]].forEach(function(f){
+      var b = el('<button' + (filtreCles === f[0] ? ' class="on"' : '') + '>' + f[1] + '</button>');
+      b.addEventListener("click", function(){ filtreCles = f[0]; render(); });
+      fil.appendChild(b);
+    });
+
+    function dessiner(){
+      var n = bgs.length, nr = 0, nd = 0;
+      bgs.forEach(function(b){ var e = etatCle(b.num); if(e && e.etat === "remise") nr++; if(e && e.etat === "rendue") nd++; });
+      stats.innerHTML =
+        '<div class="kstat"><b>' + (n - nr - nd) + '</b><span>À REMETTRE</span></div>' +
+        '<div class="kstat"><b style="color:var(--c1)">' + nr + '</b><span>REMISES</span></div>' +
+        '<div class="kstat"><b style="color:var(--live)">' + nd + '</b><span>RENDUES</span></div>';
+      liste.innerHTML = "";
+      var f = rechercheCles.trim().toUpperCase(), vus = 0;
+      bgs.forEach(function(b){
+        var e = etatCle(b.num), et = e ? e.etat : "a";
+        if(filtreCles !== "tous" && filtreCles !== et) return;
+        if(f && String(b.num).toUpperCase().indexOf(f) !== 0 && String(b.resp || "").toUpperCase().indexOf(f) === -1) return;
+        vus++;
+        var ligne = !e ? 'Clé à remettre' :
+          (e.etat === "remise" ? 'Remise ' + heureCourte(e.remise) + ' par ' + esc(e.remisePar || "?")
+                               : 'Rendue ' + heureCourte(e.rendue) + ' · remise ' + heureCourte(e.remise));
+        var r = el('<div class="krow ' + (e ? e.etat : '') + '"><div class="kn">' + esc(b.num) + '</div>' +
+          '<div class="kt"><div class="kr">' + (b.resp ? esc(b.resp) : '<span style="color:var(--dim)">Responsable non renseigné</span>') +
+          '</div><div class="ks">' + ligne + '</div></div></div>');
+        if(!e || e.etat === "remise"){
+          var bt = el('<button class="kb' + (e ? ' back' : '') + '">' + (e ? 'Récupérée' : 'Remettre') + '</button>');
+          bt.addEventListener("click", function(){ basculer(b, e); });
+          r.appendChild(bt);
+        }
+        liste.appendChild(r);
+      });
+      if(!vus) liste.appendChild(el('<div class="none"><b>Aucun bungalow</b>Rien ne correspond à ta recherche.</div>'));
+    }
+    function basculer(b, e){
+      var avant = e ? JSON.parse(JSON.stringify(e)) : null, apres;
+      if(!e) apres = {etat:"remise", remise:Date.now(), remisePar:signature()};
+      else apres = {etat:"rendue", remise:e.remise, remisePar:e.remisePar, rendue:Date.now(), renduePar:signature()};
+      if(!majCle(b.num, apres)) return;
+      dessiner();
+      toast("Bungalow " + b.num + (apres.etat === "remise" ? " : clé remise" + (b.resp ? " à " + b.resp : "") : " : clé récupérée"),
+        function(){ majCle(b.num, avant); dessiner(); });
+    }
+    q.addEventListener("input", function(){ rechercheCles = q.value; dessiner(); });
+    rafraichirCles = dessiner;
+    dessiner();
+  }
+
+  /* ---------- olympiades -------------------------------------------------
+     Données reprises de l'artefact « Olympiades du WEI » : 32 équipes,
+     31 matchs, 9 épreuves, 6 shifts et la liste de matériel. Les résultats
+     et les cases de matériel sont partagés comme les clés : une écriture
+     par match, donc deux arbitres peuvent saisir en même temps. */
+  var sectionOlymp = "tableau", epreuveOuverte = null, phaseOlymp = "toutes";
+  function oly(){ return state.olympiades || {equipes:[], epreuves:{}, jeux:[], shifts:[], materiel:[], matchs:[], phases:[]}; }
+  function estPosteOlymp(sh){
+    var n = cle(sh.nom);
+    return n.indexOf("olympiade") > -1 || n.indexOf("maquillage") > -1 || n.indexOf("activite") > -1 ||
+           n.indexOf("ventrigliss") > -1 || n.indexOf("faucheuse") > -1 ||
+           n.indexOf("shootbasket") > -1 || n.indexOf("course scotch") > -1;
+  }
+  function gereOlymp(pid){ return !!pid && mesAffectations(pid).some(estPosteOlymp); }
+  function epreuveDuShift(sh){
+    var n = cle(sh.nom);
+    if(n.indexOf("ventrigliss") > -1) return "vent";
+    if(n.indexOf("faucheuse") > -1) return "fauch";
+    if(n.indexOf("shootbasket") > -1) return "shoot";
+    if(n.indexOf("course scotch") > -1) return "course";
+    if(n.indexOf("8e") > -1 || n.indexOf("relais") > -1) return "eau";
+    if(n.indexOf("1/4") > -1 || n.indexOf("bubble") > -1) return "bubble";
+    if(n.indexOf("1/2") > -1) return "corde";
+    if(n.indexOf("finale") > -1) return "parcours";
+    return null;
+  }
+  function matchDe(id){
+    var L = oly().matchs;
+    for(var i=0;i<L.length;i++) if(L[i].id === id) return L[i];
+    return null;
+  }
+  function equipeCote(m, cote){       // { num, nom } ou null si le match amont n'est pas joué
+    var ref = m[cote] || {};
+    if(ref.seed) return {num:ref.seed, nom:oly().equipes[ref.seed - 1] || ("Équipe " + ref.seed)};
+    var src = matchDe(ref.from);
+    return src ? vainqueur(src) : null;
+  }
+  function vainqueur(m){
+    var r = (state.olymp || {})["m" + m.id];
+    return r && r.cote ? equipeCote(m, r.cote) : null;
+  }
+
+  function vOlymp(){
+    var b0 = el('<button class="lnk sticky-back">← Retour</button>');
+    b0.addEventListener("click", function(){ admin && !moi ? go("admin") : retour(); });
+    app.appendChild(b0);
+    app.appendChild(el('<h2 class="lead">Olympiades</h2>'));
+
+    var joues = oly().matchs.filter(function(m){ return (state.olymp || {})["m" + m.id]; }).length;
+    app.appendChild(el('<p class="meta">' + oly().equipes.length + ' équipes · ' + oly().matchs.length +
+      ' matchs · <b style="color:var(--c1)">' + joues + ' joué' + (joues > 1 ? 's' : '') + '</b> · tournoi de 13h30 à 16h15</p>'));
+
+    var onglets2 = el('<div class="kfil"></div>');
+    [["tableau","Tableau"],["epreuves","Épreuves"],["deroule","Déroulé"],["materiel","Matériel"]].forEach(function(o){
+      var b = el('<button' + (sectionOlymp === o[0] ? ' class="on"' : '') + '>' + o[1] + '</button>');
+      b.addEventListener("click", function(){ sectionOlymp = o[0]; render(); });
+      onglets2.appendChild(b);
+    });
+    app.appendChild(onglets2);
+    var zone = el('<div></div>');
+    app.appendChild(zone);
+
+    function dessine(){
+      zone.innerHTML = "";
+      if(sectionOlymp === "tableau") tableauOlymp(zone);
+      else if(sectionOlymp === "epreuves") epreuvesOlymp(zone);
+      else if(sectionOlymp === "deroule") derouleOlymp(zone);
+      else materielOlymp(zone);
+    }
+    rafraichirOlymp = dessine;
+    dessine();
+  }
+
+  function tableauOlymp(zone){
+    var phases = oly().phases;
+    var f = el('<div class="kfil"></div>');
+    [["toutes","Tout"]].concat(phases.map(function(p){ return [p[0], p[0]]; })).forEach(function(o){
+      var b = el('<button' + (phaseOlymp === o[0] ? ' class="on"' : '') + '>' + esc(o[1]) + '</button>');
+      b.addEventListener("click", function(){ phaseOlymp = o[0]; rafraichirOlymp(); });
+      f.appendChild(b);
+    });
+    zone.appendChild(f);
+
+    phases.forEach(function(ph){
+      if(phaseOlymp !== "toutes" && phaseOlymp !== ph[0]) return;
+      var ms = oly().matchs.filter(function(m){ return m.stage === ph[0]; });
+      if(!ms.length) return;
+      zone.appendChild(el('<h3 class="sec">' + esc(ph[1]) + ' · ' + esc(ph[2]) + '</h3>'));
+      ms.forEach(function(m){
+        var ep = oly().epreuves[m.ep] || {name:m.ep};
+        var d = el('<div class="obox"><div class="oligne"><span class="otag">M' + m.id + '</span>' +
+          '<span class="otag">' + esc(m.time) + '</span><span class="otag">' + esc(m.place) + '</span>' +
+          '<span class="meta">' + esc(ep.name) + '</span></div></div>');
+        var duel = el('<div class="oligne"></div>');
+        var r = (state.olymp || {})["m" + m.id];
+        ["a","b"].forEach(function(cote, i){
+          if(i === 1) duel.appendChild(el('<span class="ovs">contre</span>'));
+          var e = equipeCote(m, cote);
+          if(!e){
+            duel.appendChild(el('<div class="oteam vide">En attente de M' + (m[cote].from || "?") + '</div>'));
+            return;
+          }
+          var b = el('<button class="oteam' + (r && r.cote === cote ? ' gagne' : '') + '">' +
+            '<span class="on">n°' + e.num + '</span>' + esc(e.nom) + (r && r.cote === cote ? ' ✓' : '') + '</button>');
+          b.addEventListener("click", function(){
+            if(r && r.cote === cote) majOlymp("m" + m.id, null);        // on annule
+            else majOlymp("m" + m.id, {cote:cote, par:signature(), t:Date.now()});
+            rafraichirOlymp();
+          });
+          duel.appendChild(b);
+        });
+        d.appendChild(duel);
+        if(r) d.appendChild(el('<p class="meta">Vainqueur saisi par ' + esc(r.par || "?") +
+          ' à ' + heureCourte(r.t) + ' · touche le nom pour annuler.</p>'));
+        zone.appendChild(d);
+      });
+    });
+  }
+
+  function epreuvesOlymp(zone){
+    var jeux = oly().jeux;
+    if(epreuveOuverte){
+      var g = jeux.filter(function(x){ return x.k === epreuveOuverte; })[0];
+      if(g){
+        var b = el('<button class="mini">← Toutes les épreuves</button>');
+        b.addEventListener("click", function(){ epreuveOuverte = null; rafraichirOlymp(); });
+        zone.appendChild(b);
+        zone.appendChild(el('<h3 class="fh" style="font-size:1.5rem">' + esc(g.name) + '</h3>'));
+        zone.appendChild(el('<p class="meta">' + esc(g.stage) + ' · ' + esc(g.time) + ' · ' + esc(g.who) +
+          ' · ' + esc(g.matches) + ' · ' + esc(g.where) + '</p>'));
+        function sec(titre, contenu){
+          if(!contenu) return;
+          zone.appendChild(el('<div class="fsec"><h4>' + titre + '</h4>' + contenu + '</div>'));
+        }
+        function liste(t){ return '<ul>' + t.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>'; }
+        sec("But du jeu", '<p>' + esc(g.goal) + '</p>');
+        sec("Règles", liste(g.rules || []));
+        sec("Comment on gagne", '<p>' + esc(g.win) + '</p>');
+        if(g.tie) sec("Égalité", '<p>' + esc(g.tie) + '</p>');
+        if(g.staff && g.staff.length) sec("Qui tient l'atelier", '<ul>' + g.staff.map(function(x){
+          return '<li><b>' + esc(x[0]) + ' personnes</b> — ' + esc(x[1]) + '</li>'; }).join("") + '</ul>');
+        if(g.setup) sec("Installation", liste(g.setup));
+        if(g.flow) sec("Déroulé d\'un match", liste(g.flow));
+        if(g.plan && g.plan.length) sec("Horaires", '<ul>' + g.plan.map(function(x){
+          return '<li><b>' + esc(x[0]) + '</b> — ' + esc(x[1]) + '</li>'; }).join("") + '</ul>');
+        return;
+      }
+    }
+    jeux.forEach(function(g){
+      var c = el('<button class="card" style="border-left-color:var(--c1)"><h3>' + esc(g.name) + '</h3>' +
+        '<div class="meta">' + esc(g.stage) + ' · ' + esc(g.time) + ' · ' + esc(g.who) + '</div>' +
+        '<div class="more">Règles et consignes →</div></button>');
+      c.addEventListener("click", function(){ epreuveOuverte = g.k; rafraichirOlymp(); });
+      zone.appendChild(c);
+    });
+  }
+
+  function derouleOlymp(zone){
+    oly().shifts.forEach(function(sh){
+      var d = el('<div class="obox"><div class="oligne"><span class="otag">' + esc(sh.start) + ' → ' + esc(sh.end) +
+        '</span><span class="otag">' + sh.n + ' personnes</span></div><h3>' + esc(sh.title) + '</h3>' +
+        '<p class="meta">' + esc(sh.role) + '</p></div>');
+      if(sh.where) d.appendChild(el('<p class="meta"><b>Où :</b> ' + esc(sh.where) + '</p>'));
+      if(sh.posts && sh.posts.length) d.appendChild(el('<p class="meta"><b>Postes :</b> ' +
+        sh.posts.map(function(x){ return esc(x[0]) + ' (' + esc(x[1]) + ')'; }).join(" · ") + '</p>'));
+      if(sh.missions && sh.missions.length) d.appendChild(el('<div class="fsec"><h4>Missions</h4><ul>' +
+        sh.missions.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join("") + '</ul></div>'));
+      if(sh.steps && sh.steps.length) d.appendChild(el('<div class="fsec"><h4>Déroulé</h4><ul>' +
+        sh.steps.map(function(x){ return '<li><b>' + esc(x[0]) + '</b> — ' + esc(x[1]) + '</li>'; }).join("") + '</ul></div>'));
+      if(sh.relay) d.appendChild(el('<div class="snote">' + esc(sh.relay) + '</div>'));
+      zone.appendChild(d);
+    });
+  }
+
+  function materielOlymp(zone){
+    var tot = 0, faits = 0;
+    oly().materiel.forEach(function(g, gi){
+      g.items.forEach(function(it, ii){ tot++; if((state.olymp || {})["mat:" + gi + ":" + ii]) faits++; });
+    });
+    zone.appendChild(el('<p class="meta">' + faits + ' sur ' + tot + ' préparés · touche une ligne quand c\'est prêt.</p>'));
+    oly().materiel.forEach(function(g, gi){
+      var d = el('<div class="obox"><h3>' + esc(g.g) + '</h3></div>');
+      g.items.forEach(function(it, ii){
+        var k = "mat:" + gi + ":" + ii, on = !!(state.olymp || {})[k];
+        var r = el('<div class="omat' + (on ? ' ok' : '') + '"><span>' + (on ? '✓ ' : '') + esc(it[0]) + '</span>' +
+          (it[1] ? '<span class="od">' + esc(it[1]) + '</span>' : '') + '</div>');
+        r.addEventListener("click", function(){
+          majOlymp(k, on ? null : {par:signature(), t:Date.now()});
+          rafraichirOlymp();
+        });
+        d.appendChild(r);
+      });
+      zone.appendChild(d);
+    });
+  }
+
+  /* --- porte admin --- */
+  function vGate(){
+    app.appendChild(el('<h2 class="lead">Accès orga</h2>'));
+    app.appendChild(el('<p>Réservé à l\'équipe d\'organisation.</p>'));
+    var i = el('<input type="password" placeholder="Mot de passe" aria-label="Mot de passe">');
+    var e = el('<p style="color:var(--alert);font-weight:700" hidden>Mot de passe incorrect.</p>');
+    var b = el('<button class="btn go">Ouvrir</button>');
+    function tenter(){
+      if(empreinte(i.value.trim().toLowerCase()) === state.mdp){ admin = true; go("admin"); }
+      else { e.hidden = false; i.select(); }
+    }
+    b.addEventListener("click", tenter);
+    i.addEventListener("keydown", function(ev){ if(ev.key === "Enter") tenter(); });
+    app.appendChild(i); app.appendChild(e); app.appendChild(b);
+    var r = el('<button class="btn ghost">Retour</button>');
+    r.addEventListener("click", function(){ go(moi ? "me" : "pick"); });
+    app.appendChild(r);
+  }
+
+  /* --- admin : liste des shifts --- */
+  function vAdmin(){
+    var jid = (vue.p && vue.p.jour) || jourAujourdhui() || (state.jours[0] && state.jours[0].id);
+    app.appendChild(el('<div class="demo">Tu modifies une copie de travail, gardée dans ce navigateur. ' +
+      'Le site ne change que quand tu as enregistré <code>config/planning.js</code> ' +
+      '(bouton en haut à droite) et publié ce fichier sur GitHub.</div>'));
+
+    var trous = state.shifts.filter(function(s){ return manque(s) > 0; });
+    if(trous.length){
+      app.appendChild(el('<div class="warnbox"><b>' + trous.length + ' shift' + (trous.length>1?'s':'') +
+        ' incomplet' + (trous.length>1?'s':'') + '</b> — ' +
+        esc(trous.slice(0,4).map(function(s){ return s.nom; }).join(", ")) +
+        (trous.length > 4 ? "…" : "") + '</div>'));
+    } else {
+      app.appendChild(el('<div class="okbox">Tous les shifts sont au complet.</div>'));
+    }
+
+    app.appendChild(el('<div class="pcnote">L\'admin est prévue pour un écran d\'ordinateur. ' +
+      'Sur téléphone tout fonctionne, mais tu vas beaucoup faire défiler.</div>'));
+
+    var bar = el('<div class="abar"></div>');
+    bar.appendChild(onglets(jid, function(id){ go("admin", {jour:id}); }));
+    var add = el('<button class="btn go">+ Nouveau shift</button>');
+    add.addEventListener("click", function(){
+      var ns = {id:uid("s"), jour:jid, nom:"Nouveau shift", debut:"12:00", fin:"14:00", lieu:"",
+               quotas:{}, equipe:[], fiche:{mission:"", taches:[], materiel:[], referent:""}};
+      state.bdes.forEach(function(b){ ns.quotas[b.id] = 1; });
+      state.shifts.push(ns); sauver(); go("edit", {id:ns.id});
+    });
+    bar.appendChild(add);
+    app.appendChild(bar);
+
+    var grille = el('<div class="agrid"></div>');
+    app.appendChild(grille);
+
+    var dernierCode = null;
+    var listeJour = shiftsDuJour(jid);
+    if(!listeJour.length) grille.appendChild(el('<div class="none" style="grid-column:1/-1">' +
+      '<b>Aucun shift ce jour-là</b>Crée le premier avec « + Nouveau shift ».</div>'));
+    listeJour.forEach(function(s){
+      if(s.code && s.code !== dernierCode){
+        dernierCode = s.code;
+        grille.appendChild(el('<div class="grh"><b>' + esc(s.code) + '</b>' + s.debut + '</div>'));
+      }
+      var d = el('<div class="adm"></div>');
+      d.appendChild(el('<div class="t"><h3>' + (s.code ? '<span class="code">' + esc(s.code) + '</span>' : '') +
+        esc(s.nom) + '</h3><span class="h">' + s.debut + ' → ' + s.fin + '</span></div>'));
+      d.appendChild(el('<div class="quota">' + pastillesQuota(s) + '</div>'));
+      if(respsDe(s).length) d.appendChild(el('<div class="meta" style="margin-top:6px"><b style="color:var(--alert)">Resp.</b> ' +
+        esc(respsDe(s).map(function(id){ var p = pers(id); return p ? court(p.nom) : "?"; }).join(", ")) + '</div>'));
+      var mod = el('<button class="mini">Modifier / affecter</button>');
+      mod.addEventListener("click", function(){ go("edit", {id:s.id}); });
+      var sup = el('<button class="mini warn">Supprimer</button>');
+      sup.addEventListener("click", function(){
+        if(!confirm("Supprimer le shift « " + s.nom + " » ?")) return;
+        state.shifts = state.shifts.filter(function(x){ return x.id !== s.id; });
+        sauver(); render();
+      });
+      d.appendChild(mod); d.appendChild(sup);
+      grille.appendChild(d);
+    });
+
+    var tab = el('<button class="btn ghost">Tableau des affectations</button>');
+    tab.addEventListener("click", function(){ go("tableau", {jour:jid}); });
+    app.appendChild(tab);
+    var reg = el('<button class="btn ghost">Membres, date et réglages</button>');
+    reg.addEventListener("click", function(){ go("reglages"); });
+    app.appendChild(reg);
+  }
+
+  /* --- admin : tableau noms x shifts ------------------------------------
+     Une ligne par personne, une colonne par shift du jour. On coche la case
+     pour affecter. La ligne grise de chaque BDE rappelle le remplissage du
+     quota, et un point rouge signale un créneau qui en chevauche un autre
+     déjà pris par cette personne. */
+  var filtreCol = "", masqueComplets = false;
+  function vTableau(){
+    var jid = (vue.p && vue.p.jour) || jourAujourdhui() || (state.jours[0] && state.jours[0].id);
+    var b0 = el('<button class="lnk">← Retour aux shifts</button>');
+    b0.addEventListener("click", function(){ go("admin", {jour:jid}); });
+    app.appendChild(b0);
+    app.appendChild(el('<h2 class="lead">Tableau des affectations</h2>'));
+    app.appendChild(onglets(jid, function(id){ go("tableau", {jour:id}); }));
+
+    var barre = el('<div class="tools" style="margin-bottom:8px"></div>');
+    var f = el('<input type="search" placeholder="Filtrer les shifts (nom de poste)" ' +
+               'style="width:auto;min-width:240px" aria-label="Filtrer les shifts">');
+    f.value = filtreCol;
+    f.addEventListener("input", function(){ filtreCol = f.value; dessine(); });
+    var mc = el('<button class="tool">' + (masqueComplets ? "Tous les shifts" : "Seulement les incomplets") + '</button>');
+    mc.addEventListener("click", function(){ masqueComplets = !masqueComplets; render(); });
+    barre.appendChild(f); barre.appendChild(mc);
+    app.appendChild(barre);
+    app.appendChild(el('<p class="meta">Clique une case pour affecter ou retirer. ' +
+      '<b style="color:var(--live)">✓</b> affecté · <b style="color:var(--alert)">R</b> responsable · ' +
+      '<b style="color:var(--alert)">•</b> chevauche un autre de ses shifts · ' +
+      '<b style="color:var(--c1)">≡</b> même poste deux fois de suite.</p>'));
+
+    var boite = el('<div class="grilbox"></div>');
+    app.appendChild(boite);
+
+    function colonnes(){
+      var q = cle(filtreCol);
+      return shiftsDuJour(jid).filter(function(sh){
+        if(sh.tous) return false;
+        if(q && cle(sh.nom).indexOf(q) === -1 && cle(sh.code || "").indexOf(q) === -1) return false;
+        if(masqueComplets && manque(sh) <= 0) return false;
+        return true;
+      });
+    }
+    function etatCase(sh, p){          // { classe, texte } d'une case
+      if(estResp(sh, p.id)) return {c:"g resp", t:"R"};
+      var cls = "g", txt = "";
+      if(sh.equipe.indexOf(p.id) > -1){ cls += " ok"; txt = "✓"; }
+      if(occupe(p.id, sh)){ cls += " ko"; if(!txt) txt = "•"; }
+      if(enchainePoste(p.id, sh)){ cls += " dbl"; if(!txt) txt = "≡"; }
+      return {c:cls, t:txt};
+    }
+    function cellule(sh, p){
+      var e = etatCase(sh, p);
+      return '<td class="' + e.c + '" data-s="' + sh.id + '" data-p="' + p.id + '">' + e.t + '</td>';
+    }
+    function etatQuota(sh, b){
+      if(sh.total) return {c:"gq", t:sh.equipe.length + "/" + sh.total};
+      var c = compte(sh, b.id), n = sh.quotas[b.id] || 0;
+      return {c:"gq" + (c > n ? " over" : c < n ? " under" : ""), t:c + "/" + n};
+    }
+    function quota(sh, b){
+      var e = etatQuota(sh, b);
+      return '<td class="' + e.c + '" data-q="' + sh.id + '|' + b.id + '">' + e.t + '</td>';
+    }
+    function dessine(){
+      var cols = colonnes();
+      if(!cols.length){ boite.innerHTML = '<p class="meta" style="padding:16px">Aucun shift ne correspond.</p>'; return; }
+      var h = '<table class="gril"><thead><tr><th class="cnom">Membre</th>';
+      cols.forEach(function(sh){
+        h += '<th title="' + esc(sh.nom) + '"><span class="gc">' + esc(sh.code || "") + '</span>' +
+             sh.debut + '<br>' + sh.fin + '</th>';
+      });
+      h += '</tr><tr><th class="cnom"></th>';
+      cols.forEach(function(sh){
+        var n = sh.nom.length > 15 ? sh.nom.slice(0, 14) + "…" : sh.nom;
+        h += '<th title="' + esc(sh.nom) + '">' + esc(n) + '</th>';
+      });
+      h += '</tr></thead><tbody>';
+      state.bdes.forEach(function(b){
+        var gens = state.people.filter(function(p){ return p.bde === b.id; })
+                               .sort(function(x, y){ return x.nom.localeCompare(y.nom, "fr"); });
+        if(!gens.length) return;
+        h += '<tr class="gbde"><th class="cnom" style="color:' + b.couleur + '">' + esc(b.nom) + '</th>';
+        cols.forEach(function(sh){ h += quota(sh, b); });
+        h += '</tr>';
+        gens.forEach(function(p){
+          h += '<tr data-p="' + p.id + '"><th class="cnom">' + esc(p.nom) +
+               '<span class="gn">' + mesAffectations(p.id).length + '</span></th>';
+          cols.forEach(function(sh){ h += cellule(sh, p); });
+          h += '</tr>';
+        });
+      });
+      boite.innerHTML = h + '</tbody></table>';
+    }
+    boite.addEventListener("click", function(e){
+      var td = e.target.closest("td.g");
+      if(!td || td.classList.contains("resp")) return;
+      var sh = shift(td.dataset.s), p = pers(td.dataset.p);
+      if(!sh || !p) return;
+      var i = sh.equipe.indexOf(p.id);
+      if(i > -1) sh.equipe.splice(i, 1); else sh.equipe.push(p.id);
+      sauver();
+      // mise à jour ciblée : la ligne de la personne, la ligne de quota de son BDE
+      var ligne = td.parentNode;
+      Array.prototype.forEach.call(ligne.querySelectorAll("td.g"), function(c){
+        var e = etatCase(shift(c.dataset.s), p);
+        c.className = e.c; c.textContent = e.t;
+      });
+      ligne.querySelector(".gn").textContent = mesAffectations(p.id).length;
+      var q = boite.querySelector('td[data-q="' + sh.id + '|' + p.bde + '"]');
+      if(q){ var e2 = etatQuota(sh, bdeDe(p.bde)); q.className = e2.c; q.textContent = e2.t; }
+    });
+    dessine();
+  }
+
+  /* --- admin : édition d'un shift --- */
+  function vEdit(){
+    var s = shift(vue.p && vue.p.id);
+    if(!s){ go("admin"); return; }
+    var back = el('<button class="lnk">← Retour aux shifts</button>');
+    back.addEventListener("click", function(){ go("admin", {jour:s.jour}); });
+    app.appendChild(back);
+    var cols = el('<div class="ecols"></div>');
+    app.appendChild(cols);
+
+    var f = el('<div class="adm ecol"></div>');
+    f.appendChild(el('<label>Nom du shift</label>'));
+    var nom = el('<input value="' + esc(s.nom) + '">');
+    nom.addEventListener("input", function(){ s.nom = nom.value; sauver(); });
+    f.appendChild(nom);
+
+    if(state.jours.length > 1) f.appendChild(el('<label>Jour</label>'));
+    var jsel = el('<select>' + state.jours.map(function(j){
+      return '<option value="' + j.id + '"' + (j.id === s.jour ? ' selected' : '') + '>' +
+             esc(j.nom) + ' ' + dateLabel(j) + '</option>'; }).join("") + '</select>');
+    jsel.addEventListener("change", function(){ s.jour = jsel.value; sauver(); });
+    if(state.jours.length > 1) f.appendChild(jsel);
+
+    var grid = el('<div class="fld"></div>');
+    var d1 = el('<div><label>Début</label><input type="time" value="' + s.debut + '"></div>');
+    var d2 = el('<div><label>Fin</label><input type="time" value="' + s.fin + '"></div>');
+    d1.querySelector("input").addEventListener("change", function(e){ s.debut = e.target.value; sauver(); });
+    d2.querySelector("input").addEventListener("change", function(e){ s.fin = e.target.value; sauver(); });
+    grid.appendChild(d1); grid.appendChild(d2);
+    f.appendChild(grid);
+    f.appendChild(el('<p class="meta" style="margin-top:8px">Un créneau qui commence après minuit ' +
+      '(avant ' + coupure() + ' h) fait partie de la soirée : 02:00 = 2 h du matin, en fin de soirée.</p>'));
+
+    f.appendChild(el('<label>Lieu</label>'));
+    var lieu = el('<input value="' + esc(s.lieu || "") + '">');
+    lieu.addEventListener("input", function(){ s.lieu = lieu.value; sauver(); });
+    f.appendChild(lieu);
+
+    if(s.total){ state.bdes.forEach(function(b, i){ s.quotas[b.id] = i ? 0 : s.total; }); delete s.total; }
+    var mode = s.tous ? "tous" : "bde";
+    f.appendChild(el('<label>Effectif</label>'));
+    var ms = el('<select>' +
+      '<option value="bde"' + (mode !== "tous" ? " selected" : "") + '>Nombre de personnes</option>' +
+      '<option value="tous"' + (mode === "tous" ? " selected" : "") + '>Tout le monde (moment collectif, briefing…)</option>' +
+      '</select>');
+    ms.addEventListener("change", function(){
+      delete s.tous; delete s.total;
+      if(ms.value === "tous"){ s.tous = true; s.equipe = []; }
+      if(ms.value === "total") s.total = Math.max(1, s.equipe.length);
+      sauver(); render();
+    });
+    f.appendChild(ms);
+    if(mode === "bde"){
+      var qg = el('<div class="fld"></div>');
+      state.bdes.forEach(function(b){
+        var w = el('<div><label>Personnes, hors responsable</label>' +
+                   '<input type="number" min="0" max="30" value="' + (s.quotas[b.id] || 0) + '"></div>');
+        w.querySelector("input").addEventListener("change", function(e){
+          s.quotas[b.id] = Math.max(0, parseInt(e.target.value, 10) || 0); sauver(); render();
+        });
+        qg.appendChild(w);
+      });
+      f.appendChild(qg);
+    } else if(mode === "total"){
+      f.appendChild(el('<label>Nombre de personnes</label>'));
+      var ti = el('<input type="number" min="1" max="60" value="' + s.total + '">');
+      ti.addEventListener("change", function(){
+        s.total = Math.max(1, parseInt(ti.value, 10) || 1); sauver(); render();
+      });
+      f.appendChild(ti);
+    } else {
+      f.appendChild(el('<p class="meta" style="margin-top:8px">Apparaît dans le planning de chaque ' +
+        'membre, sans affectation nominative.</p>'));
+    }
+
+    f.appendChild(el('<label>Note pour ce créneau</label>'));
+    var no = el('<textarea style="min-height:64px" placeholder="Visible sur la carte et la fiche, pour ce créneau uniquement"></textarea>');
+    no.value = s.note || "";
+    no.addEventListener("input", function(){ if(no.value.trim()) s.note = no.value; else delete s.note; sauver(); });
+    f.appendChild(no);
+    cols.appendChild(f);
+
+    /* affectation */
+    var aff = el('<div class="adm ecol scroll"><h3>Qui est sur ce shift</h3>' +
+      '<p class="meta">Touche un nom pour l\'ajouter ou l\'enlever. Les personnes déjà prises sur un ' +
+      'créneau qui se chevauche sont signalées.</p></div>');
+    var viv = (state.respPool || []).filter(function(id){ return pers(id); });
+    respsDe(s).forEach(function(id){ if(viv.indexOf(id) === -1 && pers(id)) viv.push(id); });
+    if(!s.tous && viv.length){
+      var gr = el('<div class="grp"><div class="gt" style="color:var(--alert)">Responsables — en plus de l\'effectif</div>' +
+        '<div class="chips"></div></div>');
+      var bx = gr.querySelector(".chips");
+      viv.forEach(function(id){
+        var pr = pers(id), on = estResp(s, id), occ = !on && occupe(id, s);
+        var ch = el('<button class="chip' + (on ? ' on' : '') + '">' + (on ? '<span class="mk">✓</span>' : '') +
+          esc(pr.nom) + ' <span style="color:var(--dim2)">' + bdeDe(pr.bde).court + '</span>' +
+          (occ ? ' <span style="color:var(--alert)">⚠</span>' : '') + '</button>');
+        ch.addEventListener("click", function(){
+          s.resps = respsDe(s).slice();
+          var i = s.resps.indexOf(id);
+          if(i > -1) s.resps.splice(i,1);
+          else { s.resps.push(id); var j = s.equipe.indexOf(id); if(j > -1) s.equipe.splice(j,1); }
+          sauver(); render();
+        });
+        bx.appendChild(ch);
+      });
+      aff.appendChild(gr);
+    }
+    if(s.tous){
+      aff.appendChild(el('<p class="meta" style="margin-top:10px"><b>Moment collectif :</b> ' +
+        'tout le monde le voit dans son planning, il n\'y a personne à affecter.</p>'));
+    } else if(s.total){
+      aff.appendChild(el('<p class="gt" style="margin-top:10px' + (s.equipe.length < s.total ? ';color:var(--alert)' : '') +
+        '">Sans répartition — ' + s.equipe.length + ' / ' + s.total + '</p>'));
+    }
+    if(!s.tous) state.bdes.forEach(function(b){
+      var c = compte(s, b.id), n = s.total ? null : (s.quotas[b.id] || 0);
+      var g = el('<div class="grp"><div class="gt" style="color:' + b.couleur + '">' + esc(b.nom) +
+        (n === null ? ' — ' + c : ' — <span' + (c < n ? ' style="color:var(--alert)"' : '') + '>' + c + ' / ' + n + '</span>') +
+        '</div><div class="chips"></div></div>');
+      var box = g.querySelector(".chips");
+      state.people.filter(function(p){ return p.bde === b.id; })
+        .sort(function(x,y){ return x.nom.localeCompare(y.nom,"fr"); })
+        .forEach(function(p){
+          var on = s.equipe.indexOf(p.id) > -1;
+          var occ = !on && occupe(p.id, s);
+          var ch = el('<button class="chip' + (on ? ' on' : '') + '">' +
+            (on ? '<span class="mk">✓</span>' : '') + esc(p.nom) +
+            (occ ? ' <span style="color:var(--alert)">⚠</span>' : '') + '</button>');
+          ch.addEventListener("click", function(){
+            var i = s.equipe.indexOf(p.id);
+            if(i > -1) s.equipe.splice(i,1);
+            else { s.equipe.push(p.id); if(estResp(s, p.id)) s.resps.splice(s.resps.indexOf(p.id),1); }
+            sauver(); render();
+          });
+          box.appendChild(ch);
+        });
+      aff.appendChild(g);
+    });
+
+    /* fiche de poste */
+    state.fiches = state.fiches || {};
+    var k = cle(s.nom);
+    var fi = state.fiches[k] = state.fiches[k] || {mission:"", taches:[], materiel:[], referent:""};
+    var memes = state.shifts.filter(function(x){ return cle(x.nom) === k; }).length;
+    var fb = el('<div class="adm ecol scroll"><h3>Fiche de poste</h3>' +
+      '<p class="meta">Commune ' + (memes > 1 ? 'aux <b>' + memes + ' shifts</b>' : 'au shift') +
+      ' « ' + esc(s.nom) + ' ». Tu l\'écris une fois, elle s\'affiche partout. ' +
+      'Elle suit le nom du poste : renommer le shift le détache de cette fiche.</p></div>');
+    fb.appendChild(el('<label>Mission</label>'));
+    var mi = el('<textarea placeholder="En une ou deux phrases, ce qu\'on attend de la personne."></textarea>');
+    mi.value = fi.mission || "";
+    mi.addEventListener("input", function(){ fi.mission = mi.value; sauver(); });
+    fb.appendChild(mi);
+    fb.appendChild(el('<label>Ce qu\'elle fait (une ligne par tâche)</label>'));
+    var ta = el('<textarea></textarea>');
+    ta.value = (fi.taches || []).join("\n");
+    ta.addEventListener("input", function(){ fi.taches = lignes(ta.value); sauver(); });
+    fb.appendChild(ta);
+    fb.appendChild(el('<label>Matériel (une ligne par élément)</label>'));
+    var ma = el('<textarea></textarea>');
+    ma.value = (fi.materiel || []).join("\n");
+    ma.addEventListener("input", function(){ fi.materiel = lignes(ma.value); sauver(); });
+    fb.appendChild(ma);
+    fb.appendChild(el('<label>En cas de problème</label>'));
+    var re = el('<input placeholder="Qui appeler, sur quel canal">');
+    re.value = fi.referent || "";
+    re.addEventListener("input", function(){ fi.referent = re.value; sauver(); });
+    fb.appendChild(re);
+    cols.appendChild(fb);
+    cols.appendChild(aff);
+
+    var vu = el('<button class="btn ghost">Voir la fiche comme un participant</button>');
+    vu.addEventListener("click", function(){ go("fiche", {id:s.id}); });
+    app.appendChild(vu);
+  }
+
+  function lignes(v){
+    return v.split("\n").map(function(x){ return x.trim(); }).filter(function(x){ return x; });
+  }
+  function occupe(pid, s){
+    var d = debutDe(s), f = finDe(s);
+    return state.shifts.some(function(o){
+      if(o.id === s.id || o.tous || !estSur(o, pid)) return false;
+      var od = debutDe(o), of2 = finDe(o);
+      return od < f && d < of2;
+    });
+  }
+
+  /* --- répartition automatique d'un BDE ---------------------------------
+     Tirage au sort sous contraintes, sur les seules places vides :
+     - jamais deux créneaux qui se chevauchent (postes de responsable compris) ;
+     - charge équilibrée en heures, pas en nombre de shifts ;
+     - on évite d'enchaîner deux créneaux sans au moins 30 min de pause, et
+       jamais deux fois le même poste à la suite, même quand l'enchaînement
+       est autorisé la nuit ;
+     - on évite plus de 3 h d'affilée, et d'enchaîner une fin de nuit (après 2 h)
+       avec un créneau du matin (avant 11 h) le même jour ;
+     - un responsable n'est pas placé sur un autre poste dans l'heure qui précède
+       ou qui suit ses créneaux de responsable : il reste à son poste ;
+     - les fins de nuit sont réparties entre tous, mais regroupées sur une seule
+       nuit par personne : qui fait la fin de nuit du vendredi est épargné le samedi
+       matin et le samedi soir, et inversement ;
+     - 120 tirages, on garde le meilleur, puis on rééquilibre en transférant des
+       créneaux des plus chargés vers les moins chargés, sans jamais enfreindre
+       les règles ci-dessus. Les affectations existantes ne bougent pas, donc le
+       bouton complète un planning déjà commencé. */
+  var H = 3600000;
+  function melange(a){
+    for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function repartir(bid){
+    var pool = state.people.filter(function(p){ return p.bde === bid && !p.horsAuto; });
+    var slots = [];
+    state.shifts.forEach(function(sh){
+      if(sh.tous || sh.total) return;
+      var n = Math.max(0, (sh.quotas[bid] || 0) - compte(sh, bid));
+      var d = debutDe(sh), f = finDe(sh);
+      if(!d) return;
+      for(var k = 0; k < n; k++) slots.push({s:sh, d:d.getTime(), f:f.getTime()});
+    });
+    if(!pool.length || !slots.length) return {places:slots.length, remplies:0};
+
+    var base = {}, chefs = {};
+    pool.forEach(function(p){
+      chefs[p.id] = state.shifts.filter(function(o){ return estResp(o, p.id); })
+        .map(function(o){ return [debutDe(o).getTime() - H, finDe(o).getTime() + H]; });
+    });
+    pool.forEach(function(p){
+      base[p.id] = state.shifts.filter(function(o){ return !o.tous && estSur(o, p.id); })
+        .map(function(o){ return [debutDe(o).getTime(), finDe(o).getTime(), o.nom]; });
+    });
+    function charge(L){ var m = 0; for(var i=0;i<L.length;i++) m += L[i][1] - L[i][0]; return m / 60000; }
+    function bloc(L, d, f){            // durée du bloc continu qui contiendrait [d,f]
+      var a = d, b = f, bouge = true;
+      while(bouge){
+        bouge = false;
+        for(var i=0;i<L.length;i++){
+          if(L[i][1] >= a && L[i][0] <= b && (L[i][0] < a || L[i][1] > b)){
+            a = Math.min(a, L[i][0]); b = Math.max(b, L[i][1]); bouge = true;
+          }
+        }
+      }
+      return (b - a) / 60000;
+    }
+    function heureDe(t){ var x = new Date(t); return x.getHours() + x.getMinutes()/60; }
+    function jourDeT(t){ var x = new Date(t); return x.getFullYear()*10000 + x.getMonth()*100 + x.getDate(); }
+    function nuitMatin(L, d, f){       // fin de nuit puis matin, ou l'inverse, le même jour
+      var hd = heureDe(d), jd = jourDeT(d), pen = 0;
+      for(var i=0;i<L.length;i++){
+        var ld = L[i][0], lf = L[i][1];
+        if(hd >= 6 && hd < 11 && jourDeT(lf) === jd && heureDe(lf) > 2 && heureDe(lf) <= 6 && lf <= d) pen++;
+        var hl = heureDe(ld);
+        if(hl >= 6 && hl < 11 && jourDeT(f) === jourDeT(ld) && heureDe(f) > 2 && heureDe(f) <= 6 && f <= ld) pen++;
+      }
+      return pen;
+    }
+    function chevauche(L, d, f){ for(var i=0;i<L.length;i++) if(L[i][0] < f && d < L[i][1]) return true; return false; }
+    var BLOC_MAX = state.blocMax || 180;  // minutes d'affilée au maximum (3 h par défaut, 4 h en option)
+    function memePosteColle(L, d, f, nom){   // deux fois le même poste à la suite
+      for(var i=0;i<L.length;i++){
+        if(L[i][2] !== nom) continue;
+        if(L[i][1] <= d && d - L[i][1] < PAUSE) return true;
+        if(f <= L[i][0] && L[i][0] - f < PAUSE) return true;
+      }
+      return false;
+    }
+    function tropLong(L, d, f){        // règle stricte, sauf pour un shift qui dure plus à lui seul
+      return bloc(L, d, f) > Math.max(BLOC_MAX, (f - d) / 60000);
+    }
+    var PAUSE = 30 * 60000, UNE_NUIT = !!state.nuitContinue;
+    function nuitCle(d, f){            // la nuit (22 h – 6 h) que touche [d,f], ou null
+      var x = new Date(d); x.setHours(0, 0, 0, 0);
+      for(var k = -1; k <= 0; k++){
+        var ws = new Date(x.getTime()); ws.setDate(ws.getDate() + k); ws.setHours(22, 0, 0, 0);
+        var we = new Date(ws.getTime()); we.setDate(we.getDate() + 1); we.setHours(6, 0, 0, 0);
+        if(d < we.getTime() && f > ws.getTime()) return jourDeT(ws.getTime());
+      }
+      return null;
+    }
+    var nuitDuJour = {};               // "j1" -> clé de la nuit qui commence ce jour-là à 22 h
+    state.jours.forEach(function(j){
+      var q = j.date.split("-");
+      nuitDuJour[j.id] = jourDeT(new Date(+q[0], +q[1]-1, +q[2], 22, 0, 0, 0).getTime());
+    });
+    var imposee = {};                  // choix manuel : cette personne ne veille que cette nuit-là
+    pool.forEach(function(p){ if(p.nuit && nuitDuJour[p.nuit]) imposee[p.id] = nuitDuJour[p.nuit]; });
+    function nuitInterdite(pid, d, f){
+      if(!UNE_NUIT || !imposee[pid]) return false;
+      var k = nuitCle(d, f);
+      return k !== null && k !== imposee[pid];
+    }
+    function autreNuit(L, d, f){       // mode « une seule nuit » : [d,f] tombe-t-il sur une autre nuit que celle déjà faite ?
+      var k = nuitCle(d, f);
+      if(k === null) return false;
+      for(var i=0;i<L.length;i++){ var j = nuitCle(L[i][0], L[i][1]); if(j !== null && j !== k) return true; }
+      return false;
+    }
+    function jonctionOk(t){            // mode « une seule nuit » : on peut enchaîner pendant la nuit
+      if(!UNE_NUIT) return false;
+      var h = new Date(t).getHours(); return h >= 22 || h < 6;
+    }
+    function colles(L, d, f){          // créneaux de L sans vraie pause avant ou après [d,f]
+      var n = 0;
+      for(var i=0;i<L.length;i++){
+        if(L[i][1] <= d && d - L[i][1] < PAUSE){ if(!jonctionOk(d)) n++; }
+        else if(f <= L[i][0] && L[i][0] - f < PAUSE){ if(!jonctionOk(f)) n++; }
+      }
+      return n;
+    }
+    function nbChaines(L){
+      var t = L.slice().sort(function(x, y){ return x[0] - y[0]; }), n = 0;
+      for(var i=1;i<t.length;i++)
+        if(t[i][0] >= t[i-1][1] && t[i][0] - t[i-1][1] < PAUSE && !jonctionOk(t[i][0])) n++;
+      return n;
+    }
+    function tardif(f){ var h = heureDe(f); return h > 2 && h <= 6; }
+    function nbTardifs(L){ var n = 0; for(var i=0;i<L.length;i++) if(tardif(L[i][1])) n++; return n; }
+    function nuits(L, f){              // [fins de nuit la même nuit, fins de nuit une autre nuit]
+      var j = jourDeT(f), meme = 0, autre = 0;
+      for(var i=0;i<L.length;i++) if(tardif(L[i][1])){ if(jourDeT(L[i][1]) === j) meme++; else autre++; }
+      return [meme, autre];
+    }
+
+    /* mode « une seule nuit » : chaque personne est rattachée à une nuit.
+       Ceux qui ont déjà un créneau de nuit (un poste de responsable, par ex.)
+       gardent la leur ; ceux qui en ont déjà deux ne font plus aucune nuit.
+       Les autres sont répartis entre les nuits au prorata de la demande. */
+    var nuitsDem = {};
+    slots.forEach(function(sl){ var k = nuitCle(sl.d, sl.f); if(k !== null) nuitsDem[k] = (nuitsDem[k] || 0) + (sl.f - sl.d); });
+    var clesNuits = Object.keys(nuitsDem).map(Number).sort();
+    function groupes(){
+      var g = {}, libres = [], deja = {};
+      pool.forEach(function(p){
+        var ks = {};
+        base[p.id].forEach(function(x){ var k = nuitCle(x[0], x[1]); if(k !== null) ks[k] = 1; });
+        var n = Object.keys(ks);
+        if(n.length > 1) g[p.id] = -1;               // déjà sur deux nuits : aucune nuit de plus
+        else if(n.length === 1) g[p.id] = Number(n[0]);
+        else if(imposee[p.id]) g[p.id] = imposee[p.id];   // choix manuel
+        else { libres.push(p.id); return; }
+        if(g[p.id] !== -1) deja[g[p.id]] = (deja[g[p.id]] || 0) + 1;
+      });
+      melange(libres);
+      var tot = 0; clesNuits.forEach(function(k){ tot += nuitsDem[k]; });
+      var place = libres.length, i = 0;
+      clesNuits.forEach(function(k, idx){
+        // cible proportionnelle à la demande, diminuée de ceux déjà placés sur cette nuit
+        var cible = Math.round((place + Object.keys(deja).reduce(function(a, c){ return a + deja[c]; }, 0)) * nuitsDem[k] / tot) - (deja[k] || 0);
+        var n = idx === clesNuits.length - 1 ? libres.length - i :
+                cible + Math.floor(Math.random() * 5) - 2;
+        n = Math.max(0, Math.min(n, libres.length - i));
+        for(var c = 0; c < n && i < libres.length; c++) g[libres[i++]] = k;
+      });
+      return g;
+    }
+
+    slots.forEach(function(sl){
+      var n = 0;
+      for(var i = 0; i < slots.length; i++) if(slots[i].d <= sl.d && sl.d < slots[i].f) n++;
+      sl.pression = n;
+    });
+
+    var meilleur = null;
+    for(var essai = 0; essai < 40; essai++){
+      var iv = {}, pris = {}, grp = UNE_NUIT ? groupes() : null;
+      pool.forEach(function(p){ iv[p.id] = base[p.id].slice(); });
+      var ordre = melange(slots.slice()).sort(essai % 2
+        ? function(x, y){ return (y.pression - x.pression) || (x.d - y.d); }
+        : function(x, y){ return x.d - y.d; });
+      var aff = [], trous = [], rates = 0, pen = 0;
+      ordre.forEach(function(sl){
+        var choix = null, mini = Infinity, cle2 = sl.s.id, kn = nuitCle(sl.d, sl.f);
+        function candidat(p, groupeSeul){
+          if(sl.s.equipe.indexOf(p.id) > -1 || estResp(sl.s, p.id)) return;
+          if(pris[cle2 + "|" + p.id]) return;
+          var L = iv[p.id];
+          if(chevauche(L, sl.d, sl.f)) return;
+          if(chevauche(chefs[p.id], sl.d, sl.f)) return;   // reste à son poste de responsable
+          if(tropLong(L, sl.d, sl.f)) return;
+          if(memePosteColle(L, sl.d, sl.f, sl.s.nom)) return;
+          if(UNE_NUIT && kn !== null){
+            if(autreNuit(L, sl.d, sl.f) || grp[p.id] === -1) return;   // règle stricte
+            if(nuitInterdite(p.id, sl.d, sl.f)) return;                // nuit choisie à la main
+            if(groupeSeul && grp[p.id] !== kn) return;
+          }
+          var sc = charge(L);
+          if(bloc(L, sl.d, sl.f) > BLOC_MAX) sc += 600;
+          sc += 700 * colles(L, sl.d, sl.f);
+          sc += 450 * nuitMatin(L, sl.d, sl.f);
+          if(!UNE_NUIT && tardif(sl.f)){
+            var nn = nuits(L, sl.f);
+            if(nn[1]) sc += 350;           // déjà une fin de nuit l'autre nuit : on épargne
+            else if(nn[0]) sc -= 120;      // déjà de nuit ce soir-là : on regroupe
+          }
+          sc += Math.random() * 50;
+          if(sc < mini){ mini = sc; choix = p.id; }
+        }
+        pool.forEach(function(p){ candidat(p, UNE_NUIT && kn !== null); });
+        if(choix === null){ rates++; trous.push([sl.s, null, sl.d, sl.f]); return; }
+        if(bloc(iv[choix], sl.d, sl.f) > BLOC_MAX) pen++;
+        pen += nuitMatin(iv[choix], sl.d, sl.f);
+        iv[choix].push([sl.d, sl.f, sl.s.nom]);
+        pris[cle2 + "|" + choix] = true;
+        aff.push([sl.s, choix, sl.d, sl.f]);
+      });
+      var ch = pool.map(function(p){ return charge(iv[p.id]); });
+      var ecart = Math.max.apply(null, ch) - Math.min.apply(null, ch);
+      var deuxNuits = pool.filter(function(p){
+        var js = {};
+        iv[p.id].forEach(function(x){
+          if(UNE_NUIT){ var k = nuitCle(x[0], x[1]); if(k !== null) js[k] = 1; }
+          else if(tardif(x[1])) js[jourDeT(x[1])] = 1;
+        });
+        return Object.keys(js).length > 1;
+      }).length;
+      var chaines = 0;
+      pool.forEach(function(p){ chaines += nbChaines(iv[p.id]); });
+      var score = rates * 1e6 + chaines * 500 + pen * 400 + deuxNuits * 150 + ecart;
+      if(!meilleur || score < meilleur.score) meilleur = {score:score, aff:aff, trous:trous, iv:iv, rates:rates, pen:pen, ecart:ecart};
+    }
+
+    /* ---- optimisation globale (recuit simulé) ----------------------------
+       Point de départ : le meilleur tirage. On propose ensuite des centaines de
+       milliers de petites modifications — donner un créneau à quelqu'un d'autre,
+       ou échanger deux créneaux entre deux personnes — et on garde celles qui
+       améliorent le planning, par ordre de priorité :
+         1. pas d'enchaînement sans 30 min de pause,
+         2. pas de fin de nuit suivie d'un créneau le matin même,
+         3. pas de bloc de plus de 3 h,
+         4. le moins possible de monde de nuit les deux nuits,
+         5. des heures équilibrées entre tous. */
+    var IV = meilleur.iv, A = meilleur.aff.concat(meilleur.trous), ids = pool.map(function(p){ return p.id; });
+    var TROU = 5000;
+    var total = 0; ids.forEach(function(id){ total += charge(IV[id]); });
+    var moy = total / ids.length;
+    var W_CH = 1000, W_NM = 800, W_BL = 600, W_2N = 350, W_LD = 60;
+    function coutP(pid){
+      var L = IV[pid], t = L.slice().sort(function(x, y){ return x[0] - y[0]; }), c = 0, i, j;
+      for(i = 1; i < t.length; i++){
+        var gap = t[i][0] - t[i-1][1];
+        if(gap >= 0 && gap < PAUSE && !jonctionOk(t[i][0])) c += W_CH;
+      }
+      var a = null, b = null;
+      for(i = 0; i < t.length; i++){
+        if(a !== null && t[i][0] <= b){ b = Math.max(b, t[i][1]); }
+        else { if(a !== null && (b - a) > BLOC_MAX*60000) c += W_BL; a = t[i][0]; b = t[i][1]; }
+      }
+      if(a !== null && (b - a) > BLOC_MAX*60000) c += W_BL;
+      var nuitsVues = {}, nb = 0;
+      for(i = 0; i < t.length; i++){
+        if(!tardif(t[i][1])) continue;
+        var jf = jourDeT(t[i][1]);
+        if(!nuitsVues[jf]){ nuitsVues[jf] = 1; nb++; }
+        for(j = 0; j < t.length; j++){
+          var hd = heureDe(t[j][0]);
+          if(hd >= 6 && hd < 11 && jourDeT(t[j][0]) === jf && t[j][0] >= t[i][1]) c += W_NM;
+        }
+      }
+      if(nb > 1) c += W_2N;
+      var dev = (charge(L) - moy) / 60;
+      return c + W_LD * dev * dev;
+    }
+    function retire(L, d, f){ for(var m = 0; m < L.length; m++) if(L[m][0] === d && L[m][1] === f){ L.splice(m, 1); return; } }
+    var occ = {};
+    A.forEach(function(a){ if(a[1] !== null) occ[a[0].id + "|" + a[1]] = 1; });
+    function dispo(pid, a){            // contraintes dures pour recevoir le créneau a
+      if(occ[a[0].id + "|" + pid] || a[0].equipe.indexOf(pid) > -1 || estResp(a[0], pid)) return false;
+      if(UNE_NUIT && (autreNuit(IV[pid], a[2], a[3]) || nuitInterdite(pid, a[2], a[3]))) return false;
+      if(tropLong(IV[pid], a[2], a[3]) || memePosteColle(IV[pid], a[2], a[3], a[0].nom)) return false;
+      return !chevauche(IV[pid], a[2], a[3]) && !chevauche(chefs[pid], a[2], a[3]);
+    }
+    var C = {}, cout = 0;
+    ids.forEach(function(id){ C[id] = coutP(id); cout += C[id]; });
+    A.forEach(function(a){ if(a[1] === null) cout += TROU; });
+    var meilleurCout = cout, meilleursProprios = A.map(function(a){ return a[1]; });
+    var N = 160000, T0 = 500, T1 = 1, T = T0, k = Math.pow(T1 / T0, 1 / N);
+    for(var it = 0; it < N && A.length && ids.length > 1; it++, T *= k){
+      var a1 = A[Math.floor(Math.random() * A.length)], P = a1[1], delta, cP, cQ, Q;
+      if(P === null){                                            // place vide : on essaie de la pourvoir
+        Q = ids[Math.floor(Math.random() * ids.length)];
+        if(!dispo(Q, a1)) continue;
+        IV[Q].push([a1[2], a1[3], a1[0].nom]);
+        cQ = coutP(Q); delta = cQ - C[Q] - TROU;
+        if(delta <= 0 || Math.random() < Math.exp(-delta / T)){
+          C[Q] = cQ; cout += delta; occ[a1[0].id + "|" + Q] = 1; a1[1] = Q;
+        } else retire(IV[Q], a1[2], a1[3]);
+      } else if(Math.random() < 0.5){                            // transfert
+        Q = ids[Math.floor(Math.random() * ids.length)];
+        if(Q === P || !dispo(Q, a1)) continue;
+        retire(IV[P], a1[2], a1[3]); IV[Q].push([a1[2], a1[3], a1[0].nom]);
+        cP = coutP(P); cQ = coutP(Q); delta = cP + cQ - C[P] - C[Q];
+        if(delta <= 0 || Math.random() < Math.exp(-delta / T)){
+          C[P] = cP; C[Q] = cQ; cout += delta;
+          delete occ[a1[0].id + "|" + P]; occ[a1[0].id + "|" + Q] = 1; a1[1] = Q;
+        } else { retire(IV[Q], a1[2], a1[3]); IV[P].push([a1[2], a1[3], a1[0].nom]); }
+      } else {                                                   // échange
+        var a2 = A[Math.floor(Math.random() * A.length)]; Q = a2[1];
+        if(Q === null || Q === P || a2[0] === a1[0]) continue;
+        if(occ[a2[0].id + "|" + P] || a2[0].equipe.indexOf(P) > -1 || estResp(a2[0], P)) continue;
+        if(occ[a1[0].id + "|" + Q] || a1[0].equipe.indexOf(Q) > -1 || estResp(a1[0], Q)) continue;
+        retire(IV[P], a1[2], a1[3]); retire(IV[Q], a2[2], a2[3]);
+        if(chevauche(IV[P], a2[2], a2[3]) || chevauche(chefs[P], a2[2], a2[3]) ||
+           chevauche(IV[Q], a1[2], a1[3]) || chevauche(chefs[Q], a1[2], a1[3]) ||
+           (UNE_NUIT && (autreNuit(IV[P], a2[2], a2[3]) || autreNuit(IV[Q], a1[2], a1[3]) ||
+                         nuitInterdite(P, a2[2], a2[3]) || nuitInterdite(Q, a1[2], a1[3]))) ||
+           tropLong(IV[P], a2[2], a2[3]) || tropLong(IV[Q], a1[2], a1[3]) ||
+           memePosteColle(IV[P], a2[2], a2[3], a2[0].nom) || memePosteColle(IV[Q], a1[2], a1[3], a1[0].nom)){
+          IV[P].push([a1[2], a1[3], a1[0].nom]); IV[Q].push([a2[2], a2[3], a2[0].nom]); continue;
+        }
+        IV[P].push([a2[2], a2[3], a2[0].nom]); IV[Q].push([a1[2], a1[3], a1[0].nom]);
+        cP = coutP(P); cQ = coutP(Q); delta = cP + cQ - C[P] - C[Q];
+        if(delta <= 0 || Math.random() < Math.exp(-delta / T)){
+          C[P] = cP; C[Q] = cQ; cout += delta;
+          delete occ[a1[0].id + "|" + P]; delete occ[a2[0].id + "|" + Q];
+          occ[a1[0].id + "|" + Q] = 1; occ[a2[0].id + "|" + P] = 1;
+          a1[1] = Q; a2[1] = P;
+        } else {
+          retire(IV[P], a2[2], a2[3]); retire(IV[Q], a1[2], a1[3]);
+          IV[P].push([a1[2], a1[3], a1[0].nom]); IV[Q].push([a2[2], a2[3], a2[0].nom]);
+        }
+      }
+      if(cout < meilleurCout - 1e-9){ meilleurCout = cout; meilleursProprios = A.map(function(a){ return a[1]; }); }
+    }
+    A.forEach(function(a, i){ a[1] = meilleursProprios[i]; });
+
+    // bilan sur la solution retenue
+    var fin = {}; ids.forEach(function(id){ fin[id] = base[id].slice(); });
+    var pourvues = A.filter(function(a){ return a[1] !== null; });
+    pourvues.forEach(function(a){ fin[a[1]].push([a[2], a[3]]); });
+    var nbCh = 0, chF = [];
+    ids.forEach(function(id){ nbCh += nbChaines(fin[id]); chF.push(charge(fin[id])); });
+    pourvues.forEach(function(a){ a[0].equipe.push(a[1]); });
+    return {places:slots.length, remplies:pourvues.length, enchainements:nbCh,
+            ecart:Math.max.apply(null, chF) - Math.min.apply(null, chF)};
+  }
+  window.WEI.repartir = function(bid){ var r = repartir(bid); sauver(); render(); return r; };
+
+  /* --- suppression d'un membre, annulable --- */
+  var toastEl = document.getElementById("toast"), toastT = document.getElementById("toastT");
+  var toastU = document.getElementById("toastU"), toastTimer = null, annuler = null;
+  toastU.addEventListener("click", function(){
+    var f = annuler; fermerToast();
+    if(f) f();
+  });
+  function fermerToast(){ clearTimeout(toastTimer); toastEl.hidden = true; annuler = null; }
+  function toast(txt, undo){
+    toastT.textContent = txt;
+    annuler = undo;
+    toastU.hidden = !undo;
+    toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(fermerToast, 8000);
+  }
+  function supprimerMembre(p){
+    var rang = state.people.indexOf(p);
+    if(rang === -1) return;
+    var places = [], chefs = [], vivier = (state.respPool || []).indexOf(p.id);
+    state.shifts.forEach(function(s){
+      var i = s.equipe.indexOf(p.id);
+      if(i > -1){ places.push({id:s.id, i:i}); s.equipe.splice(i,1); }
+      var r = respsDe(s).indexOf(p.id);
+      if(r > -1){ chefs.push({id:s.id, i:r}); s.resps.splice(r,1); }
+    });
+    if(vivier > -1) state.respPool.splice(vivier, 1);
+    state.people.splice(rang, 1);
+    sauver(); render();
+    var nl = places.length + chefs.length;
+    toast(p.nom + " n'est plus dans la liste" +
+          (nl ? " · " + nl + " shift" + (nl>1 ? "s libérés" : " libéré") : ""),
+      function(){
+        if(state.people.some(function(x){ return x.id === p.id; })) return;
+        state.people.splice(Math.min(rang, state.people.length), 0, p);
+        places.forEach(function(pl){
+          var s = shift(pl.id);
+          if(s && s.equipe.indexOf(p.id) === -1) s.equipe.splice(Math.min(pl.i, s.equipe.length), 0, p.id);
+        });
+        chefs.forEach(function(pl){
+          var s = shift(pl.id);
+          if(s){ s.resps = respsDe(s).slice(); if(s.resps.indexOf(p.id) === -1) s.resps.splice(Math.min(pl.i, s.resps.length), 0, p.id); }
+        });
+        if(vivier > -1){ state.respPool = state.respPool || []; if(state.respPool.indexOf(p.id) === -1) state.respPool.splice(vivier, 0, p.id); }
+        sauver(); render();
+      });
+  }
+
+  /* --- nuits : quel jour porte la nuit d'un créneau, et combien de monde il y faut --- */
+  function jourDeLaNuit(d, f){
+    for(var i = 0; i < state.jours.length; i++){
+      var q = state.jours[i].date.split("-");
+      var ws = new Date(+q[0], +q[1]-1, +q[2], 22, 0, 0, 0).getTime();
+      if(d.getTime() < ws + 8*3600000 && f.getTime() > ws) return state.jours[i].id;
+    }
+    return null;
+  }
+  function demandeNuit(bid){          // heures-personne à couvrir par nuit
+    var r = {};
+    state.shifts.forEach(function(s){
+      if(s.tous || s.total) return;
+      var q = s.quotas[bid] || 0;
+      if(!q) return;
+      var d = debutDe(s), f = finDe(s);
+      if(!d) return;
+      var j = jourDeLaNuit(d, f);
+      if(j) r[j] = (r[j] || 0) + q * (f - d) / 3600000;
+    });
+    return r;
+  }
+  function enchainePoste(pid, sh){   // même poste deux fois à la suite (moins de 30 min d'écart)
+    var d = debutDe(sh), f = finDe(sh);
+    if(!d) return false;
+    return state.shifts.some(function(o){
+      if(o.id === sh.id || o.tous || o.nom !== sh.nom || !estSur(o, pid)) return false;
+      var od = debutDe(o), of2 = finDe(o);
+      return (of2 <= d && d - of2 < 1800000) || (f <= od && od - f < 1800000);
+    });
+  }
+  function nuitsResp(pid){            // nuits déjà imposées par ses postes de responsable
+    var set = {};
+    state.shifts.forEach(function(s){
+      if(!estResp(s, pid)) return;
+      var j = jourDeLaNuit(debutDe(s), finDe(s));
+      if(j) set[j] = 1;
+    });
+    return Object.keys(set);
+  }
+
+  /* --- admin : personnes, BDE, données --- */
+  function vReglages(){
+    var back = el('<button class="lnk">← Retour aux shifts</button>');
+    back.addEventListener("click", function(){ go("admin"); });
+    app.appendChild(back);
+
+    var ev = el('<div class="adm"><h3>La soirée</h3></div>');
+    ev.appendChild(el('<label>Nom</label>'));
+    var n1 = el('<input value="' + esc(state.event.nom) + '">');
+    n1.addEventListener("input", function(){ state.event.nom = n1.value; sauver(); topT.textContent = n1.value; });
+    ev.appendChild(n1);
+    ev.appendChild(el('<label>Lieu</label>'));
+    var n2 = el('<input value="' + esc(state.event.lieu) + '">');
+    n2.addEventListener("input", function(){ state.event.lieu = n2.value; sauver(); topS.textContent = n2.value; });
+    ev.appendChild(n2);
+    app.appendChild(ev);
+
+    var jv = el('<div class="adm"><h3>Date de la soirée</h3>' +
+      '<p class="meta">Les shifts qui commencent après minuit (avant ' + coupure() + ' h) restent dans cette soirée.</p></div>');
+    var jd = el('<input type="date" aria-label="Date de la soirée">');
+    jd.value = state.jours[0] ? state.jours[0].date : "";
+    jd.addEventListener("change", function(){
+      if(!jd.value) return;
+      if(!state.jours.length) state.jours.push({id:"j1", nom:"", date:""});
+      var d = new Date(jd.value + "T12:00:00");
+      state.jours[0].date = jd.value;
+      state.jours[0].nom = cap(JOURS_FR[d.getDay()]);
+      sauver(); render();
+    });
+    jv.appendChild(jd);
+    if(state.jours[0]) jv.appendChild(el('<p class="meta" style="margin-top:8px">' + esc(state.jours[0].nom) + ' ' +
+      dateLabel(state.jours[0]) + ' : c\'est la date qu\'affiche le site (compte à rebours, « ce soir », « en cours »).</p>'));
+    app.appendChild(jv);
+
+    var rr = el('<div class="adm"><h3>Répartition automatique</h3>' +
+      '<p class="meta">« Répartir automatiquement » complète les places vides au hasard, en équilibrant les heures ' +
+      'entre les membres : jamais deux créneaux qui se chevauchent, jamais deux fois de suite le même poste, ' +
+      'et autant que possible 30 min de pause entre deux shifts. Les cases déjà cochées ne bougent pas. ' +
+      'Un membre marqué <b>AUTO</b> barré n\'est jamais placé automatiquement.</p></div>');
+    var bm = el('<div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
+      '<span class="meta" style="font-weight:700">Jamais plus de</span>' +
+      '<select style="width:auto"><option value="180">3 h</option><option value="240">4 h</option></select>' +
+      '<span class="meta" style="font-weight:700">de shift d\'affilée</span></div>');
+    var bms = bm.querySelector("select");
+    bms.value = String(state.blocMax || 180);
+    bms.addEventListener("change", function(){
+      if(bms.value === "180") delete state.blocMax; else state.blocMax = +bms.value;
+      sauver();
+    });
+    rr.appendChild(bm);
+
+    /* choix manuel des nuits, pour garder les amis ensemble */
+    state.bdes.forEach(function(b){
+      var gens = state.people.filter(function(p){ return p.bde === b.id && !p.horsAuto; });
+      if(!gens.length) return;
+      var dem = demandeNuit(b.id), jours = state.jours.filter(function(j){ return dem[j.id]; });
+      if(jours.length < 2) return;
+      var totDem = 0; jours.forEach(function(j){ totDem += dem[j.id]; });
+      var deuxNuits = gens.filter(function(p){ return nuitsResp(p.id).length > 1; });
+      var dispo = gens.length - deuxNuits.length;
+
+      var bloc = el('<div class="grp"><div class="gt" style="color:' + b.couleur + '">Qui veille quelle nuit — ' +
+        esc(b.nom) + '</div><p class="meta">Clique sur un nom pour le déplacer d\'une nuit à l\'autre : ' +
+        'ceux que tu places ensemble veilleront la même nuit. Le reste est tiré au sort. ' +
+        'Ne s\'applique qu\'au mode « une seule nuit par personne ».</p></div>');
+      var cols = el('<div class="rgrid" style="margin-top:8px"></div>');
+
+      function colonne(titre, sous, liste, couleur){
+        var c = el('<div style="border:2px solid var(--line);border-radius:12px;padding:10px">' +
+          '<div class="gt"' + (couleur ? ' style="color:' + couleur + '"' : '') + '>' + titre + '</div>' +
+          '<p class="meta" style="margin:2px 0 6px">' + sous + '</p><div class="chips"></div></div>');
+        var box = c.querySelector(".chips");
+        liste.sort(function(x, y){ return x.nom.localeCompare(y.nom, "fr"); }).forEach(function(p){
+          var ch = el('<button class="chip">' + esc(p.nom) + '</button>');
+          ch.addEventListener("click", function(){
+            var ordre = [null].concat(jours.map(function(j){ return j.id; }));
+            var i = ordre.indexOf(p.nuit || null);
+            var suiv = ordre[(i + 1) % ordre.length];
+            if(suiv) p.nuit = suiv; else delete p.nuit;
+            sauver(); render();
+          });
+          box.appendChild(ch);
+        });
+        if(!liste.length) box.appendChild(el('<span class="meta">Personne</span>'));
+        return c;
+      }
+
+      var auto = gens.filter(function(p){ return !p.nuit && nuitsResp(p.id).length !== 1 && nuitsResp(p.id).length < 2; });
+      cols.appendChild(colonne("Au hasard", auto.length + " personne" + (auto.length > 1 ? "s" : ""), auto, ""));
+      jours.forEach(function(j){
+        var fixes = gens.filter(function(p){ return nuitsResp(p.id).length === 1 && nuitsResp(p.id)[0] === j.id; });
+        var choisis = gens.filter(function(p){ return p.nuit === j.id && nuitsResp(p.id).length !== 1; });
+        var cible = Math.round(dispo * dem[j.id] / totDem);
+        var n = choisis.length + fixes.length;
+        cols.appendChild(colonne("Nuit de " + esc(j.nom.toLowerCase()),
+          n + " sur " + cible + " conseillés · " + Math.round(dem[j.id]) + " h à couvrir" +
+          (fixes.length ? " · dont " + fixes.length + " responsable" + (fixes.length > 1 ? "s" : "") : ""),
+          choisis.concat(fixes), b.couleur));
+      });
+      bloc.appendChild(cols);
+      if(deuxNuits.length) bloc.appendChild(el('<p class="meta" style="margin-top:8px">Sur les deux nuits, ' +
+        'donc hors équipes de nuit : ' + esc(deuxNuits.map(function(p){ return court(p.nom); }).join(", ")) + '.</p>'));
+      var raz = el('<button class="mini">Tout remettre au hasard</button>');
+      raz.addEventListener("click", function(){
+        gens.forEach(function(p){ delete p.nuit; }); sauver(); render();
+      });
+      bloc.appendChild(raz);
+      rr.appendChild(bloc);
+    });
+    app.appendChild(rr);
+
+    var rg = el('<div class="rgrid"></div>');
+    app.appendChild(rg);
+    state.bdes.forEach(function(b){
+      var g = el('<div class="adm"></div>');
+      var l = state.people.filter(function(p){ return p.bde === b.id; });
+      g.appendChild(el('<div class="t"><h3 style="color:' + b.couleur + '">' + esc(b.nom) +
+        '</h3><span class="h">' + l.length + ' personnes</span></div>'));
+      var box = el('<div class="mems"></div>');
+      l.sort(function(x,y){ return x.nom.localeCompare(y.nom,"fr"); }).forEach(function(p){
+        var n = mesAffectations(p.id).length;
+        var r = el('<div class="mem"><span class="mn">' + esc(p.nom) + '</span>' +
+          '<span class="mc' + (n ? ' on' : '') + '">' + (n ? n + ' shift' + (n>1?'s':'') : 'aucun shift') + '</span></div>');
+        state.respPool = state.respPool || [];
+        var enVivier = state.respPool.indexOf(p.id) > -1;
+        var tr = el('<button class="tg' + (enVivier ? ' on' : '') + '" title="Peut être responsable de shift">RESP.</button>');
+        tr.addEventListener("click", function(){
+          var i = state.respPool.indexOf(p.id);
+          if(i > -1) state.respPool.splice(i,1); else state.respPool.push(p.id);
+          sauver(); render();
+        });
+        var ta2 = el('<button class="tg' + (p.horsAuto ? ' off' : '') + '" title="' +
+          (p.horsAuto ? 'Exclu de la répartition automatique' : 'Inclus dans la répartition automatique') + '">AUTO</button>');
+        ta2.addEventListener("click", function(){ if(p.horsAuto) delete p.horsAuto; else p.horsAuto = true; sauver(); render(); });
+        var x = el('<button class="mx" title="Retirer de la liste" aria-label="Retirer ' + esc(p.nom) + '">✕</button>');
+        x.addEventListener("click", function(){ supprimerMembre(p); });
+        r.appendChild(tr); r.appendChild(ta2); r.appendChild(x);
+        box.appendChild(r);
+      });
+      if(!l.length) box.appendChild(el('<p class="meta">Personne dans ce BDE.</p>'));
+      g.appendChild(box);
+      var trous = 0;
+      state.shifts.forEach(function(sh){ if(!sh.tous && !sh.total) trous += Math.max(0, (sh.quotas[b.id]||0) - compte(sh, b.id)); });
+      var rb = el('<button class="mini">Répartir automatiquement' + (trous ? ' (' + trous + ' places)' : '') + '</button>');
+      rb.addEventListener("click", function(){
+        var res = repartir(b.id);
+        sauver(); render();
+        toast(res.remplies + "/" + res.places + " places remplies" +
+              (res.remplies < res.places ? " · pas assez de monde disponible" : "") +
+              (res.enchainements ? " · " + res.enchainements + " enchaînement" + (res.enchainements > 1 ? "s" : "") + " inévitable" + (res.enchainements > 1 ? "s" : "") : ""), null);
+      });
+      var eb = el('<button class="mini warn">Effacer toutes les affectations</button>');
+      eb.addEventListener("click", function(){
+        if(!confirm("Retirer tout le monde de ses shifts ? Les postes de responsable sont conservés.")) return;
+        var ids = state.people.filter(function(x){ return x.bde === b.id; }).map(function(x){ return x.id; });
+        state.shifts.forEach(function(sh){ sh.equipe = sh.equipe.filter(function(id){ return ids.indexOf(id) === -1; }); });
+        sauver(); render();
+      });
+      g.appendChild(rb); g.appendChild(eb);
+      var inp = el('<input placeholder="Ajouter un membre (Prénom NOM), puis Entrée" style="margin-top:10px">');
+      function add(){
+        var v = inp.value.trim().replace(/\s+/g," ");
+        if(!v) return;
+        state.people.push({id:uid("p"), nom:v, bde:b.id});
+        inp.value = ""; sauver(); render();
+      }
+      inp.addEventListener("keydown", function(e){ if(e.key === "Enter") add(); });
+      g.appendChild(inp);
+      rg.appendChild(g);
+    });
+
+    var ug = el('<div class="adm"><h3>Urgences</h3>' +
+      '<p class="meta">Une ligne par entrée, au format <code>texte | numéro</code>.</p></div>');
+    ug.appendChild(el('<label>Numéros — le premier est mis en avant</label>'));
+    var tn = el('<textarea></textarea>');
+    tn.value = state.urgences.numeros.map(function(n){ return n.quoi + " | " + n.tel; }).join("\n");
+    tn.addEventListener("input", function(){
+      state.urgences.numeros = lignes(tn.value).map(function(l){
+        var x = l.split("|");
+        return {quoi:(x[0]||"").trim(), tel:(x[1]||"").trim()};
+      }).filter(function(n){ return n.quoi && n.tel; });
+      sauver();
+    });
+    ug.appendChild(tn);
+    ug.appendChild(el('<label>Canaux radio — format <code>canal | rôle</code></label>'));
+    var tc = el('<textarea></textarea>');
+    tc.value = state.urgences.canaux.map(function(k){ return k.quoi + " | " + k.role; }).join("\n");
+    tc.addEventListener("input", function(){
+      state.urgences.canaux = lignes(tc.value).map(function(l){
+        var x = l.split("|");
+        return {quoi:(x[0]||"").trim(), role:(x[1]||"").trim()};
+      }).filter(function(k){ return k.quoi; });
+      sauver();
+    });
+    ug.appendChild(tc);
+    ug.appendChild(el('<label>Consigne affichée sous les numéros</label>'));
+    var tg = el('<textarea style="min-height:70px"></textarea>');
+    tg.value = state.urgences.consigne || "";
+    tg.addEventListener("input", function(){ state.urgences.consigne = tg.value; sauver(); });
+    ug.appendChild(tg);
+    rg.appendChild(ug);
+
+    var pg = el('<div class="adm"><h3>Plan de la salle</h3>' +
+      '<p class="meta">Facultatif. Dépose l\'image dans le dossier <code>assets</code> du site et écris son chemin ici ' +
+      '(par exemple <code>assets/plan.jpg</code>). Laissé vide, l\'onglet Plan n\'apparaît pas sur le site.</p></div>');
+    pg.appendChild(el('<label>Fichier ou adresse de l\'image</label>'));
+    var ps = el('<input placeholder="assets/plan.jpg">');
+    ps.value = state.plan.src || "";
+    ps.addEventListener("input", function(){ state.plan.src = ps.value.trim(); sauver(); });
+    pg.appendChild(ps);
+    pg.appendChild(el('<label>Largeur réelle de l\'image, en pixels</label>'));
+    var pw = el('<input type="number" min="200" step="10">');
+    pw.value = state.plan.w || "";
+    pw.addEventListener("input", function(){ var v = parseInt(pw.value, 10); if(v > 0){ state.plan.w = v; sauver(); } });
+    pg.appendChild(pw);
+    pg.appendChild(el('<label>Légende</label>'));
+    var pl2 = el('<input>');
+    pl2.value = state.plan.legende || "";
+    pl2.addEventListener("input", function(){ state.plan.legende = pl2.value; sauver(); });
+    pg.appendChild(pl2);
+    var pv = el('<button class="mini">Voir le plan</button>');
+    pv.addEventListener("click", function(){ go("plan"); });
+    pg.appendChild(pv);
+    rg.appendChild(pg);
+
+
+    var dat = el('<div class="adm"><h3>Fichier de configuration</h3>' +
+      '<p class="meta">Tout ce que tu modifies ici reste sur cet ordinateur tant que tu n\'as pas ' +
+      'enregistré <code>config/planning.js</code> puis publié ce fichier sur GitHub. ' +
+      'Voir le README pour la marche à suivre.</p></div>');
+    var e1 = el('<button class="mini" style="border-color:var(--c1);color:var(--c1)">Enregistrer config/planning.js</button>');
+    e1.addEventListener("click", enregistrerFichier);
+    var e2 = el('<button class="mini">Télécharger une copie</button>');
+    e2.addEventListener("click", function(){ telecharger(texteFichier(versionPubliee()), "planning.js"); });
+    var e3 = el('<button class="mini warn">Abandonner mes modifications</button>');
+    e3.addEventListener("click", function(){
+      if(!modifie()){ alert("Rien à abandonner : ta copie est identique au fichier."); return; }
+      if(!confirm("Revenir au contenu de config/planning.js ? Tes modifications non enregistrées seront perdues.")) return;
+      state = JSON.parse(JSON.stringify(FICHIER)); defauts(); sauver(); go("admin");
+    });
+    dat.appendChild(e1); dat.appendChild(e2); dat.appendChild(e3);
+
+    dat.appendChild(el('<label>Importer</label>'));
+    dat.appendChild(el('<p class="meta" style="margin:0 0 8px">Colle ici un ancien planning (le contenu d\'un ' +
+      '<code>planning.js</code> ou l\'ancien JSON de l\'onglet Données) pour le reprendre en entier. ' +
+      'Un bloc qui ne contient que des fiches de poste (<code>{"fiches": …}</code>) est ajouté sans rien effacer.</p>'));
+    var ta = el('<textarea style="min-height:120px;font-family:ui-monospace,monospace;font-size:.78rem" ' +
+      'placeholder="window.WEI_PLANNING = { … }   ou   { &quot;people&quot;: … }"></textarea>');
+    var ld = el('<button class="mini">Charger ce contenu</button>');
+    ld.addEventListener("click", function(){
+      var brut = ta.value.replace(/\/\*[\s\S]*?\*\//g, "").trim()
+        .replace(/^window\.WEI_PLANNING\s*=\s*/, "").replace(/;\s*$/, "");
+      var s;
+      try{ s = JSON.parse(brut); }catch(e){ alert("Contenu illisible, rien n'a été chargé."); return; }
+      if(s && s.fiches && !s.shifts && !s.people){
+        // import partiel : les fiches sont fusionnées, rien d'autre ne bouge
+        var noms = Object.keys(s.fiches), orphelines = [];
+        noms.forEach(function(n){
+          var f = s.fiches[n] || {};
+          state.fiches[cle(n)] = {
+            mission: String(f.mission || ""),
+            taches: [].concat(f.taches || []).map(String),
+            materiel: [].concat(f.materiel || []).map(String),
+            referent: String(f.referent || "")
+          };
+          if(!state.shifts.some(function(x){ return cle(x.nom) === cle(n); })) orphelines.push(n);
+        });
+        sauver();
+        alert(noms.length + " fiche" + (noms.length > 1 ? "s importées" : " importée") +
+              (orphelines.length ? ".\n\nAucun shift ne porte ce nom : " + orphelines.join(", ") +
+               ". Vérifie l'orthographe du poste." : "."));
+        go("admin");
+        return;
+      }
+      if(!s || !s.shifts || !s.people){ alert("Il manque les shifts ou les personnes : rien n'a été chargé."); return; }
+      if(!confirm("Remplacer tout le planning par ce contenu ? (Tu pourras encore l'abandonner tant que tu n'as pas enregistré.)")) return;
+      if(!s.jours || !s.jours.length) s.jours = state.jours;
+      if(!s.bdes || !s.bdes.length) s.bdes = state.bdes;
+      state = s; defauts(); sauver(); alert("Planning chargé. Vérifie-le, puis enregistre le fichier."); go("admin");
+    });
+    dat.appendChild(ta); dat.appendChild(ld);
+    app.appendChild(dat);
+  }
+
+  /* ---------- enregistrement du fichier de configuration ------------ */
+  var ENTETE = "/* ==================================================================\n   PLANNING DU SITE — fichier de configuration\n   ------------------------------------------------------------------\n   Tout le contenu du site vient d'ici : personnes, shifts, fiches de\n   poste, urgences. Les pages ne font que le lire : personne ne peut\n   le modifier depuis le site.\n\n   Pour le modifier :\n     - le plus simple : ouvre admin.html sur ton ordinateur, fais tes\n       changements, puis « Enregistrer le fichier » par-dessus\n       celui-ci (config/planning.js) ;\n     - ou à la main : c'est du JavaScript, garde les guillemets et\n       les virgules intacts.\n\n   Pour publier : remplace ce fichier dans le dépôt GitHub et valide\n   (commit). Le site affiche la nouvelle version en une à deux\n   minutes ; les pages déjà ouvertes proposent de se mettre à jour.\n   ================================================================== */\n";
+  function versionPubliee(){
+    var c = JSON.parse(JSON.stringify(state));
+    delete c.cles; delete c.olymp; delete c.mdp; delete c.revision;
+    delete c.bungalows; delete c.olympiades; delete c.nuitContinue;
+    var d = new Date();
+    var o = {version:3, publie:iso(d) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())};
+    Object.keys(c).forEach(function(k){ if(!(k in o)) o[k] = c[k]; });
+    return o;
+  }
+  function texteFichier(c){ return ENTETE + "window.WEI_PLANNING = " + JSON.stringify(c, null, 1) + ";\n"; }
+  function telecharger(txt, nom){
+    var url = URL.createObjectURL(new Blob([txt], {type:"text/javascript"}));
+    var a = document.createElement("a");
+    a.href = url; a.download = nom || "planning.js";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+  function apresEnregistrement(c, message){
+    FICHIER = JSON.parse(JSON.stringify(c));
+    BASE = empreinte(propre(FICHIER));
+    state.publie = c.publie;
+    var d = new Date(); enregistreA = pad(d.getHours()) + "h" + pad(d.getMinutes());
+    sauver();
+    toast(message, null);
+  }
+  function enregistrerFichier(){
+    var c = versionPubliee(), txt = texteFichier(c);
+    if(!window.showSaveFilePicker){
+      telecharger(txt, "planning.js");
+      apresEnregistrement(c, "planning.js téléchargé : mets-le dans le dossier config du site, à la place de l'ancien.");
+      return;
+    }
+    window.showSaveFilePicker({suggestedName:"planning.js", id:"wei-config",
+        types:[{description:"Planning du site", accept:{"text/javascript":[".js"]}}]})
+      .then(function(h){
+        return h.createWritable()
+          .then(function(w){ return w.write(txt).then(function(){ return w.close(); }); })
+          .then(function(){
+            apresEnregistrement(c, h.name === "planning.js"
+              ? "Enregistré. Il reste à publier config/planning.js sur GitHub."
+              : "Enregistré sous « " + h.name + " » : le site ne lit que config/planning.js, renomme-le.");
+          });
+      })
+      .catch(function(e){
+        if(e && e.name === "AbortError") return;          // fenêtre fermée sans enregistrer
+        telecharger(txt, "planning.js");
+        apresEnregistrement(c, "planning.js téléchargé : mets-le dans le dossier config du site, à la place de l'ancien.");
+      });
+  }
+
+  /* --- un brouillon basé sur une ancienne version du fichier --- */
+  function vConflit(){
+    var br = conflit, d = new Date(br.maj || 0);
+    app.appendChild(el('<h2 class="lead">Un brouillon t\'attend</h2>'));
+    app.appendChild(el('<p>Tu as un brouillon du ' + d.toLocaleDateString("fr-FR") + ' à ' + pad(d.getHours()) + 'h' + pad(d.getMinutes()) +
+      ', commencé sur une version de <code>config/planning.js</code> qui a changé depuis ' +
+      '(republiée, ou modifiée à la main).</p>'));
+    var a = el('<button class="btn go">Reprendre mon brouillon</button>');
+    a.addEventListener("click", function(){ state = br.etat; defauts(); conflit = null; sauver(); go("admin"); });
+    var b = el('<button class="btn ghost">Repartir du fichier actuel et supprimer le brouillon</button>');
+    b.addEventListener("click", function(){
+      if(!confirm("Supprimer le brouillon ?")) return;
+      conflit = null; state = JSON.parse(JSON.stringify(FICHIER)); defauts(); sauver(); go("admin");
+    });
+    app.appendChild(a); app.appendChild(b);
+  }
+
+  /* ---------- démarrage ---------- */
+  document.getElementById("topO").addEventListener("click", function(){
+    if(vue.n === "olymp") retour(); else go("olymp");
+  });
+  document.getElementById("topK").addEventListener("click", function(){
+    if(vue.n === "cles") retour(); else go("cles");
+  });
+  document.getElementById("topP").addEventListener("click", function(){
+    if(vue.n === "plan") retour(); else go("plan");
+  });
+  document.getElementById("topU").addEventListener("click", function(){
+    if(vue.n === "sos") retour(); else go("sos");
+  });
+  topA.addEventListener("click", function(){
+    if(vue.n === "admin" || vue.n === "edit" || vue.n === "reglages"){ go(moi ? "me" : "pick"); return; }
+    go(admin ? "admin" : "gate");
+  });
+
+  if(!window.WEI_PLANNING || !window.WEI_PLANNING.shifts){
+    app.innerHTML = '<div class="warnbox"><b>config/planning.js introuvable ou illisible.</b><br>' +
+      'Ouvre admin.html depuis le dossier du site (celui qui contient le dossier config), ' +
+      'et vérifie que config/planning.js n\'a pas été abîmé par une modification à la main.</div>';
+    return;
+  }
+  admin = true;
+  state = charger();
+  defauts();
+  vue = {n: conflit ? "conflit" : "admin"};
+  render();
+  etatBrouillon();
+  document.getElementById("enreg").addEventListener("click", enregistrerFichier);
+
+  // les pastilles « en cours » se mettent à jour toutes les minutes
+  setInterval(function(){
+    if(vue.n === "me" || vue.n === "planning" || vue.n === "fiche") render();
+  }, 30000);
+})();
+</script>
+
+
+</body>
+</html>

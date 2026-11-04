@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Planning — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Planning de tout le monde : en liste (par créneau) ou en emploi du temps (noms × heures). */
+WEI.demarrer({page:"planning"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  var jid = W.jourParDefaut();
+  var vue = W.param("vue") || W.lire("wei:vue") || (window.innerWidth >= 760 ? "grille" : "liste");
+  var filtre = W.param("bde") || "";
+  var m = W.moiId();
+
+  function rendre(){
+    app.innerHTML = "";
+    app.appendChild(W.el('<h2 class="lead">Planning</h2>'));
+    app.appendChild(W.onglets(jid, "planning.html", {vue:vue}));
+    var bar = W.el('<div class="vbar"><div class="seg" role="group" aria-label="Affichage"></div></div>');
+    [["liste","Liste"],["grille","Emploi du temps"]].forEach(function(v){
+      var b = W.el('<button' + (vue === v[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>');
+      b.addEventListener("click", function(){ vue = v[0]; W.ecrire("wei:vue", vue); rendre(); });
+      bar.firstChild.appendChild(b);
+    });
+    if(vue === "grille" && !W.unSeulBde()){
+      var seg = W.el('<div class="seg" role="group" aria-label="BDE"></div>');
+      [{id:"", court:"Tous"}].concat(D.bdes).forEach(function(bd){
+        var b = W.el('<button' + (filtre === bd.id ? ' class="on"' : '') + '>' + W.esc(bd.court || bd.nom) + '</button>');
+        b.addEventListener("click", function(){ filtre = bd.id; rendre(); });
+        seg.appendChild(b);
+      });
+      bar.appendChild(seg);
+    }
+    app.appendChild(bar);
+    if(vue === "grille") grille(); else liste();
+  }
+
+  /* ---------- liste par créneau ---------- */
+  function liste(){
+    var l = W.shiftsDuJour(jid);
+    if(!l.length){ app.appendChild(W.el('<div class="none"><b>Rien de prévu</b>Aucun shift ce jour-là.</div>')); return; }
+    var dernier = null;
+    l.forEach(function(s){
+      var k = s.code || s.debut;
+      if(k !== dernier){
+        dernier = k;
+        app.appendChild(W.el('<div class="grh" style="margin-top:18px"><b>' + s.debut + '</b>' + W.esc(s.code || "") + '</div>'));
+      }
+      app.appendChild(W.carte(s, {equipe:true}));
+    });
+  }
+
+  /* ---------- emploi du temps ---------- */
+  var PXH = 48;                       // largeur d'une heure, en pixels (au moins)
+  function grille(){
+    var l = W.shiftsDuJour(jid);
+    if(!l.length){ app.appendChild(W.el('<div class="none"><b>Rien de prévu</b>Aucun shift ce jour-là.</div>')); return; }
+    var t0 = Math.min.apply(null, l.map(function(s){ return +W.debutDe(s); }));
+    var t1 = Math.max.apply(null, l.map(function(s){ return +W.finDe(s); }));
+    var d0 = new Date(t0); d0.setMinutes(0, 0, 0); t0 = +d0;
+    var d1 = new Date(t1); if(d1.getMinutes()) { d1.setMinutes(0, 0, 0); d1 = new Date(+d1 + 3600000); } t1 = +d1;
+    // une soirée courte occupe toute la largeur au lieu de rester tassée à gauche
+    var nbH = (t1 - t0) / 3600000;
+    PXH = Math.max(nbH <= 8 ? 34 : 48, Math.floor((app.clientWidth - 122) / nbH));
+    var nuitSeule = true;
+    for(var tn = t0; tn < t1; tn += 3600000){ var hn = new Date(tn).getHours(); if(hn < 22 && hn >= 6) nuitSeule = false; }
+    var largeur = (t1 - t0) / 3600000 * PXH;
+    function x(t){ return (t - t0) / 3600000 * PXH; }
+
+    var tt = W.el('<div class="tt" role="region" aria-label="Emploi du temps" tabindex="0"></div>');
+    function ligne(cls, nom, titre){
+      var r = W.el('<div class="tt-row ' + cls + '"><div class="tt-n"' + (titre ? ' title="' + W.esc(titre) + '"' : '') +
+        '>' + nom + '</div><div class="tt-t" style="width:' + largeur + 'px"></div></div>');
+      tt.appendChild(r);
+      return r.lastChild;
+    }
+    // en-tête des heures
+    var h = ligne("tt-head", "HEURES");
+    for(var t = t0; t < t1; t += 3600000){
+      var dh = new Date(t);
+      h.appendChild(W.el('<span class="tt-h" style="left:' + x(t) + 'px">' + W.pad(dh.getHours()) + 'h</span>'));
+    }
+    function decor(piste){
+      // la nuit (22 h → 6 h) légèrement teintée, et un trait à l'heure actuelle
+      for(var t = t0; t < t1; t += 3600000){
+        var hh = new Date(t).getHours();
+        if(!nuitSeule && (hh >= 22 || hh < 6)) piste.appendChild(W.el('<span class="tt-nuit" style="left:' + x(t) + 'px;width:' + PXH + 'px"></span>'));
+      }
+      var now = Date.now();
+      if(now > t0 && now < t1) piste.appendChild(W.el('<span class="tt-now" style="left:' + x(now) + 'px"></span>'));
+    }
+    function blocs(piste, liste, pid){
+      // deux shifts qui se chevauchent pour la même personne : on les empile et on les signale
+      var voies = [], places = [];
+      liste.forEach(function(s){
+        var a = +W.debutDe(s), z = +W.finDe(s), v = 0;
+        while(voies[v] && voies[v] > a) v++;
+        voies[v] = z; places.push({s:s, a:a, z:z, v:v});
+      });
+      var n = voies.length;
+      places.forEach(function(o){
+        var f = W.famille(o.s.nom), resp = pid && W.estResp(o.s, pid);
+        var top = 4 + o.v * (26 / n), haut = 26 / n - (n > 1 ? 1 : 0);
+        var b = W.el('<a class="tt-b' + (n > 1 ? ' ko' : '') + '" href="' + W.lien("poste.html", {id:o.s.id}) + '" ' +
+          'title="' + W.esc(o.s.nom + " · " + o.s.debut + " → " + o.s.fin + (resp ? " · responsable" : "")) + '" ' +
+          'style="left:' + (x(o.a) + 1) + 'px;width:' + Math.max(6, x(o.z) - x(o.a) - 2) + 'px;top:' + top + 'px;bottom:auto;height:' + haut + 'px;' +
+          'background:' + W.teinte(f.c, .2) + ';border-left-color:' + f.c + ';color:' + f.c + '">' +
+          (resp ? '★ ' : '') + W.esc(f.ab) + '</a>');
+        piste.appendChild(b);
+      });
+      return n > 1;
+    }
+
+    var collectifs = l.filter(function(s){ return s.tous; });
+    if(collectifs.length){
+      var pt = ligne("tt-tous", W.tousLabel().toUpperCase());
+      decor(pt); blocs(pt, collectifs, null);
+    }
+    var conflits = 0;
+    function personne(p, cls){
+      var sh = l.filter(function(s){ return !s.tous && W.estSur(s, p.id); });
+      var b = W.bdeDe(p.bde);
+      var piste = ligne(cls || "", '<span class="pip" style="background:' + b.couleur + '"></span>' +
+        W.esc(W.court(p.nom)) + (p.id === m ? ' · toi' : ''), p.nom);
+      decor(piste);
+      if(blocs(piste, sh, p.id)){ conflits++; piste.previousSibling.style.color = "var(--alert)"; }
+      if(!sh.length) piste.previousSibling.style.opacity = ".45";
+    }
+    if(m && W.pers(m)) personne(W.pers(m), "me");
+    D.bdes.forEach(function(bd){
+      if(filtre && filtre !== bd.id) return;
+      var gens = D.people.filter(function(p){ return p.bde === bd.id; })
+        .sort(function(a, b){ return a.nom.localeCompare(b.nom, "fr"); });
+      if(!gens.length) return;
+      if(!W.unSeulBde()){
+        var g = ligne("tt-grp", '<span style="color:' + bd.couleur + '">' + W.esc(bd.nom) + '</span>');
+        g.style.width = largeur + "px";
+      }
+      gens.forEach(function(p){ personne(p); });
+    });
+    app.appendChild(tt);
+
+    // légende des couleurs présentes ce jour-là
+    var vues = {}, leg = W.el('<div class="tt-legende"></div>');
+    l.forEach(function(s){
+      var f = W.famille(s.nom);
+      if(vues[f.fam]) return;
+      vues[f.fam] = 1;
+      leg.appendChild(W.el('<span style="background:' + W.teinte(f.c, .2) + ';border-left-color:' + f.c + ';color:' + f.c + '">' + W.esc(f.fam) + '</span>'));
+    });
+    app.appendChild(leg);
+    app.appendChild(W.el('<p class="tt-note">Touche un bloc pour ouvrir la fiche de poste · ★ responsable du poste' +
+      (conflits ? ' · <b style="color:var(--alert)">nom en rouge : deux shifts en même temps</b>' : '') +
+      (nuitSeule ? '' : ' · fond bleuté : la nuit') + '.</p>'));
+
+    // on ouvre la grille sur l'heure actuelle, ou sur le premier shift
+    var cible = Date.now() > t0 && Date.now() < t1 ? x(Date.now()) - 60 : 0;
+    tt.scrollLeft = Math.max(0, cible);
+  }
+
+  rendre();
+  setInterval(function(){ if(!document.hidden && vue === "liste") rendre(); }, 60000);
+});
+</script>
+</body>
+</html>

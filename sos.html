@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Urgences — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Urgences : numéros cliquables, canaux radio, consigne. */
+WEI.demarrer({page:"sos"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  app.appendChild(W.el('<h2 class="lead">Urgences</h2>'));
+  var g = W.sosGrand();
+  if(g) app.appendChild(g);
+  else app.appendChild(W.el('<div class="none"><b>Aucun numéro enregistré</b>L\'orga les ajoute dans l\'admin.</div>'));
+});
+</script>
+</body>
+</html>

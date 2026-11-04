@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Mes shifts — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Ma page : le prochain shift en gros, puis le détail jour par jour. */
+WEI.demarrer({page:"moi"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  var m = W.moiId();
+  if(!m){ location.replace(W.lien("index.html")); return; }
+  var p = W.pers(m), b = W.bdeDe(p.bde), jid = W.jourParDefaut();
+
+  function rendre(){
+    app.innerHTML = "";
+    app.appendChild(W.el('<h2 class="lead">' + W.esc(p.nom) + '</h2>'));
+    var id = W.el('<div class="ident"><span style="color:' + b.couleur + ';font-weight:800">' + (W.unSeulBde() ? '' : W.esc(b.nom)) + '</span>' +
+      '<a href="' + W.lien("index.html", {choisir:1}) + '">Ce n\'est pas moi</a></div>');
+    id.querySelector("a").addEventListener("click", function(){ W.oublier(); });
+    app.appendChild(id);
+
+    var h = W.resume(m); if(h) app.appendChild(h);
+    var av = W.avant(); if(av) app.appendChild(av);
+    app.appendChild(W.onglets(jid, "moi.html"));
+
+    var tous = W.mesShifts(m);
+    var duJour = tous.filter(function(s){ return s.jour === jid; });
+    if(!duJour.length){
+      app.appendChild(W.el('<div class="none"><b>Aucun shift ce jour-là</b>' +
+        (tous.length && !W.unSeulJour() ? 'Tu as ' + tous.length + ' shift' + (tous.length > 1 ? 's' : '') + ' sur l\'événement, regarde les autres jours.'
+                     : 'Tu n\'es sur aucun shift pour le moment.') + '</div>'));
+    } else {
+      duJour.forEach(function(s){ app.appendChild(W.carte(s)); });
+    }
+
+    var nb = W.mesAffectations(m), minutes = 0;
+    nb.forEach(function(s){ minutes += (W.finDe(s) - W.debutDe(s)) / 60000; });
+    if(nb.length) app.appendChild(W.el('<p class="meta" style="margin-top:4px">' + (W.unSeulJour() ? 'Ta soirée' : 'Sur tout l\'événement') + ' : <b>' + nb.length +
+      ' shift' + (nb.length > 1 ? 's' : '') + '</b>, ' + Math.floor(minutes/60) + ' h' +
+      (minutes % 60 ? ' ' + W.pad(minutes % 60) : '') + '.</p>'));
+
+    app.appendChild(W.el('<a class="btn ghost" href="' + W.lien("planning.html", {jour:jid}) + '">Planning de tout le monde</a>'));
+    var sg = W.sosGrand();
+    if(sg){ app.appendChild(W.el('<div style="height:16px"></div>')); app.appendChild(sg); }
+  }
+  rendre();
+  // les pastilles « en cours » et le bandeau du haut suivent l'heure
+  setInterval(function(){ if(!document.hidden) rendre(); }, 60000);
+});
+</script>
+</body>
+</html>

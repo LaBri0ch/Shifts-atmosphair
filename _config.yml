@@ -1,0 +1,5 @@
+# GitHub Pages : ces fichiers restent dans le dépôt mais ne sont pas mis en ligne.
+# L'admin ne sert que sur ton ordinateur ; en ligne, il n'y a rien à modifier.
+exclude:
+  - admin.html
+  - README.md

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Qui es-tu ? — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Accueil : chacun touche son nom une fois, la page s'en souvient. */
+WEI.demarrer({page:"index"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  var m = W.moiId();
+  if(m && W.param("choisir") !== "1"){ location.replace(W.lien("moi.html")); return; }
+
+  app.appendChild(W.el('<h2 class="lead">Qui es-tu ?</h2>'));
+  app.appendChild(W.el('<p>Touche ton nom une fois : la page s\'en souvient ensuite.</p>'));
+
+  var bid = W.param("bde") || "";
+  var tabs = W.el('<div class="bdetabs" role="tablist"></div>');
+  [{id:"", nom:"Tous", couleur:"var(--line)"}].concat(D.bdes).forEach(function(b){
+    var n = b.id ? D.people.filter(function(p){ return p.bde === b.id; }).length : D.people.length;
+    var t = W.el('<button role="tab" style="border-bottom-color:' + b.couleur + '">' +
+      W.esc(b.court || b.nom) + ' <span class="meta" style="font-size:.75rem">' + n + '</span></button>');
+    t.addEventListener("click", function(){ bid = b.id; dessiner(); });
+    t._bid = b.id;
+    tabs.appendChild(t);
+  });
+  if(!W.unSeulBde()) app.appendChild(tabs);
+
+  var q = W.el('<input type="search" placeholder="Chercher un nom" aria-label="Chercher un nom" autocomplete="off">');
+  app.appendChild(q);
+  var liste = W.el('<div class="people"></div>');
+  app.appendChild(liste);
+
+  function dessiner(){
+    Array.prototype.forEach.call(tabs.children, function(t){
+      t.className = t._bid === bid ? "on" : "";
+      t.setAttribute("aria-selected", t._bid === bid ? "true" : "false");
+    });
+    var f = W.cle(q.value);
+    liste.innerHTML = "";
+    var n = 0;
+    D.people.filter(function(p){ return !bid || p.bde === bid; })
+      .sort(function(a, b){ return a.nom.localeCompare(b.nom, "fr"); })
+      .forEach(function(p){
+        if(f && W.cle(p.nom).indexOf(f) === -1) return;
+        n++;
+        var b = W.bdeDe(p.bde);
+        var btn = W.el('<button class="pbtn"><span class="pip" style="background:' + b.couleur + '"></span>' +
+          W.esc(p.nom) + (p.id === m ? ' <span class="meta">(toi)</span>' : '') + '</button>');
+        btn.addEventListener("click", function(){ W.choisir(p.id); location.href = W.lien("moi.html"); });
+        liste.appendChild(btn);
+      });
+    if(!n) liste.appendChild(W.el('<div class="none"><b>Aucun nom ne correspond</b>Tape juste le début du prénom.</div>'));
+  }
+  q.addEventListener("input", dessiner);
+  dessiner();
+
+  app.appendChild(W.el('<a class="btn ghost" href="' + W.lien("planning.html") + '">Voir le planning général</a>'));
+  var sg = W.sosGrand();
+  if(sg){ app.appendChild(W.el('<div style="height:20px"></div>')); app.appendChild(sg); }
+});
+</script>
+</body>
+</html>

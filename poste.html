@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Fiche de poste — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Fiche de poste : mission, tâches, matériel, équipe. */
+WEI.demarrer({page:"poste"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  var s = W.shift(W.param("id"));
+  var m = W.moiId();
+  var back = W.el('<button class="lnk sticky-back">← Retour</button>');
+  back.addEventListener("click", function(){
+    if(history.length > 1 && document.referrer.indexOf(location.host) > -1) history.back();
+    else location.href = W.lien(m ? "moi.html" : "planning.html", s ? {jour:s.jour} : null);
+  });
+  app.appendChild(back);
+  if(!s){
+    app.appendChild(W.el('<div class="none"><b>Shift introuvable</b>Il a peut-être été supprimé du planning.</div>'));
+    return;
+  }
+  var j = W.jourDe(s.jour), st = W.statut(s), f = W.ficheDe(s);
+  document.title = s.nom + " — " + D.event.nom;
+  app.appendChild(W.el('<h2 class="fh">' + W.esc(s.nom) + '</h2>'));
+  app.appendChild(W.el('<p class="meta">' + (j ? W.esc(j.nom) + ' ' + W.dateLabel(j) : '') +
+    ' · ' + s.debut + ' → ' + s.fin + (s.lieu ? ' · ' + W.esc(s.lieu) : '') + '</p>'));
+  app.appendChild(W.el('<div style="margin-top:10px"><span class="pill ' + st.c + '">' + st.l + '</span></div>'));
+  if(s.note) app.appendChild(W.el('<div class="snote big">' + W.esc(s.note) + '</div>'));
+
+  if(W.module("cles") && W.estPosteCles(s))
+    app.appendChild(W.el('<a class="btn go" style="margin-top:14px" href="' + W.lien("cles.html") + '">Ouvrir les clés des bungalows</a>'));
+  if(W.module("olympiades") && W.estPosteOlymp(s) && D.olympiades){
+    var oe = W.epreuveDuShift(s);
+    var jeu = oe ? (D.olympiades.jeux || []).filter(function(x){ return x.k === oe; })[0] : null;
+    if(jeu) app.appendChild(W.el('<div class="snote big">Épreuve : <b>' + W.esc(jeu.name) + '</b> · ' +
+      W.esc(jeu.who) + ' · ' + W.esc(jeu.matches) + '</div>'));
+    app.appendChild(W.el('<a class="btn go" style="margin-top:14px" href="' +
+      W.lien("olympiades.html", jeu ? {section:"epreuves", epreuve:jeu.k} : {section:"deroule"}) + '">' +
+      (jeu ? 'Règles et tableau des Olympiades' : 'Ouvrir les Olympiades') + '</a>'));
+  }
+
+  function liste(t){ return '<ul>' + t.map(function(x){ return '<li>' + W.esc(x) + '</li>'; }).join("") + '</ul>'; }
+  if(W.ficheVide(f)) app.appendChild(W.el('<div class="fsec"><h4>Fiche de poste</h4>' +
+    '<p class="meta">Pas encore rédigée. Demande à ton responsable de shift ce qui est attendu.</p></div>'));
+  if(f.mission) app.appendChild(W.el('<div class="fsec"><h4>Ta mission</h4><p>' + W.esc(f.mission) + '</p></div>'));
+  if(f.taches && f.taches.length) app.appendChild(W.el('<div class="fsec"><h4>Ce que tu fais</h4>' + liste(f.taches) + '</div>'));
+  if(f.materiel && f.materiel.length) app.appendChild(W.el('<div class="fsec"><h4>Matériel</h4>' + liste(f.materiel) + '</div>'));
+  if(f.referent) app.appendChild(W.el('<div class="fsec"><h4>En cas de problème</h4><p>' + W.esc(f.referent) + '</p></div>'));
+
+  if(s.tous){
+    app.appendChild(W.el('<div class="fsec"><h4>Qui</h4><p>' + (W.unSeulBde() ? 'Tout le monde.' : 'Tous les membres des BDE.') + '</p></div>'));
+  } else {
+    if(m && W.estResp(s, m)) app.appendChild(W.el('<div class="snote big" style="border-left-color:var(--alert)">' +
+      'Tu es responsable de ce shift : tu encadres l\'équipe et tu es le relais de l\'orga.</div>'));
+    var eq = W.el('<div class="fsec"><h4>L\'équipe du shift</h4><div class="team"></div></div>');
+    var box = eq.querySelector(".team"), nr = W.respsDe(s).length;
+    W.respsDe(s).concat(s.equipe).forEach(function(pid, i){
+      var p = W.pers(pid); if(!p) return;
+      box.appendChild(W.el('<span class="tm' + (i < nr ? ' rsp' : '') + '"><span class="pip" style="background:' +
+        W.bdeDe(p.bde).couleur + '"></span>' + W.esc(p.nom) + (pid === m ? ' (toi)' : '') +
+        (i < nr ? ' <em>resp.</em>' : '') + '</span>'));
+    });
+    if(!s.equipe.length && !nr) box.appendChild(W.el('<span class="meta">Personne pour l\'instant.</span>'));
+    app.appendChild(eq);
+  }
+  var mini = W.sosPetit(); if(mini) app.appendChild(mini);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1119">
+<title>Plan — Planning</title>
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script src="assets/commun.js?v=4"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top" id="top"></header>
+  <main id="app"><p class="chargement">Chargement du planning…</p></main>
+  <p class="pied" id="pied"></p>
+</div>
+<nav id="tabbar"></nav>
+<script>
+/* Plan du camping, zoomable aux boutons ou à deux doigts. */
+WEI.demarrer({page:"plan"}, function(D){
+  var W = WEI, app = document.getElementById("app");
+  app.appendChild(W.el('<h2 class="lead">Plan</h2>'));
+  if(D.plan.legende) app.appendChild(W.el('<p class="meta">' + W.esc(D.plan.legende) + '</p>'));
+  if(!D.plan.src){
+    app.appendChild(W.el('<div class="none"><b>Pas de plan pour l\'instant</b>L\'orga l\'ajoute dans l\'admin.</div>'));
+    return;
+  }
+  var box = W.el('<div class="planbox"></div>');
+  var img = W.el('<img alt="Plan du site" src="' + W.esc(D.plan.src) + '">');
+  img.addEventListener("error", function(){
+    box.innerHTML = '<p class="meta" style="padding:16px">Le plan n\'a pas pu être chargé (' + W.esc(D.plan.src) + ').</p>';
+  });
+  box.appendChild(img);
+  app.appendChild(box);
+
+  var base = D.plan.w || 1600, zoom = 1;
+  var z = W.el('<div class="zoom"><button aria-label="Dézoomer">−</button><button aria-label="Zoomer">+</button>' +
+    '<button style="min-width:auto;padding:0 14px;font-size:.85rem">Ajuster</button><span class="lvl"></span></div>');
+  var bt = z.querySelectorAll("button"), lvl = z.querySelector(".lvl");
+  function applique(){ img.style.width = Math.round(base * zoom) + "px"; lvl.textContent = Math.round(zoom * 100) + " %"; }
+  function ajuste(){ zoom = Math.max(0.15, (box.clientWidth - 18) / base); applique(); }
+  bt[0].addEventListener("click", function(){ zoom = Math.max(0.15, zoom / 1.25); applique(); });
+  bt[1].addEventListener("click", function(){ zoom = Math.min(3, zoom * 1.25); applique(); });
+  bt[2].addEventListener("click", ajuste);
+  app.appendChild(z);
+  app.appendChild(W.el('<p class="meta" style="margin-top:8px">Tu peux aussi zoomer à deux doigts et faire glisser le plan.</p>'));
+  ajuste();
+  var mini = W.sosPetit(); if(mini) app.appendChild(mini);
+});
+</script>
+</body>
+</html>
