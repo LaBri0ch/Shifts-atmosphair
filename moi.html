@@ -32,7 +32,8 @@ if(!window.WEI){
     '</div>';
   document.body.style.background = "#0A1119";
 } else {
-/* Ma page : le prochain shift en gros, puis le détail jour par jour. */
+/* Ma page : le prochain shift en gros, puis MES shifts (ceux où je suis nommé) en grandes cartes,
+   et à part, en petit, les moments collectifs (tout le monde y est, sans affectation). */
 WEI.demarrer({page:"moi"}, function(D){
   var W = WEI, app = document.getElementById("app");
   var m = W.moiId();
@@ -54,12 +55,16 @@ WEI.demarrer({page:"moi"}, function(D){
     var av = W.avant(); if(av) app.appendChild(av);
     app.appendChild(W.onglets(jid, "moi.html"));
 
-    var tous = W.mesShifts(m);
-    var duJour = tous.filter(function(s){ return s.jour === jid; });
+    var miens = W.mesAffectations(m).sort(W.triShifts);
+    var duJour = miens.filter(function(s){ return s.jour === jid; });
+    var collectifs = W.shiftsDuJour(jid).filter(function(s){ return s.tous; });
+
+    app.appendChild(W.el('<div class="sect"><span>Tes shifts</span>' +
+      (duJour.length ? '<b>' + duJour.length + '</b>' : '') + '</div>'));
     if(!duJour.length){
-      app.appendChild(W.el('<div class="none"><b>Aucun shift ce jour-là</b>' +
-        (tous.length && !W.unSeulJour() ? 'Tu as ' + tous.length + ' shift' + (tous.length > 1 ? 's' : '') + ' sur l\'événement, regarde les autres jours.'
-                     : 'Tu n\'es sur aucun shift pour le moment.') + '</div>'));
+      app.appendChild(W.el('<div class="none"><b>Aucun shift ' + (W.unSeulJour() ? 'pour toi' : 'ce jour-là') + '</b>' +
+        (miens.length && !W.unSeulJour() ? 'Tu as ' + miens.length + ' shift' + (miens.length > 1 ? 's' : '') + ' sur l\'événement, regarde les autres jours.'
+                     : 'Tu n\'es affecté à aucun poste pour le moment.') + '</div>'));
     } else {
       duJour.forEach(function(s){ app.appendChild(W.carte(s)); });
     }
@@ -69,6 +74,18 @@ WEI.demarrer({page:"moi"}, function(D){
     if(nb.length) app.appendChild(W.el('<p class="meta" style="margin-top:4px">' + (W.unSeulJour() ? 'Ta soirée' : 'Sur tout l\'événement') + ' : <b>' + nb.length +
       ' shift' + (nb.length > 1 ? 's' : '') + '</b>, ' + Math.floor(minutes/60) + ' h' +
       (minutes % 60 ? ' ' + W.pad(minutes % 60) : '') + '.</p>'));
+
+    if(collectifs.length){
+      app.appendChild(W.el('<div class="sect coll-t"><span>Moments collectifs</span><em>tout le monde</em></div>'));
+      var box = W.el('<div class="coll"></div>');
+      collectifs.forEach(function(s){
+        var st = W.statut(s);
+        box.appendChild(W.el('<a href="' + W.lien("poste.html", {id:s.id}) + '"' + (st.c === "done" ? ' class="fini"' : '') + '>' +
+          '<span class="h">' + s.debut + ' → ' + s.fin + '</span><span class="n">' + W.esc(s.nom) + '</span>' +
+          (st.c === "live" || st.c === "soon" ? '<span class="pill ' + st.c + '">' + st.l + '</span>' : '') + '</a>'));
+      });
+      app.appendChild(box);
+    }
 
     app.appendChild(W.el('<a class="btn ghost" href="' + W.lien("planning.html", {jour:jid}) + '">Planning de tout le monde</a>'));
     var sg = W.sosGrand();

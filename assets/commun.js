@@ -377,10 +377,11 @@
     c.innerHTML = h;
     return c;
   }
-  /* bandeau du haut : ce qui se passe maintenant, ou le prochain shift */
+  /* bandeau du haut : ce qui se passe maintenant, ou le prochain shift — les siens seulement,
+     pas les moments collectifs */
   function resume(pid){
     var now = new Date(), enc = null, nxt = null;
-    mesShifts(pid).forEach(function(s){
+    mesAffectations(pid).forEach(function(s){
       var d = debutDe(s), f = finDe(s);
       if(!d) return;
       if(now >= d && now < f){ if(!enc) enc = s; }
