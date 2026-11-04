@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A1119">
 <title>Mes shifts — Planning</title>
-<link rel="stylesheet" href="assets/style.css?v=5">
-<script src="assets/commun.js?v=5"></script>
+<link rel="stylesheet" href="assets/style.css?v=6">
+<script src="assets/commun.js?v=6"></script>
 </head>
 <body>
 <div class="wrap">
@@ -77,14 +77,16 @@ WEI.demarrer({page:"moi"}, function(D){
 
     if(collectifs.length){
       app.appendChild(W.el('<div class="sect coll-t"><span>Moments collectifs</span><em>tout le monde</em></div>'));
-      var box = W.el('<div class="coll"></div>');
+      // même carte que les shifts, en petit : le titre et l'heure, rien d'autre
       collectifs.forEach(function(s){
         var st = W.statut(s);
-        box.appendChild(W.el('<a href="' + W.lien("poste.html", {id:s.id}) + '"' + (st.c === "done" ? ' class="fini"' : '') + '>' +
-          '<span class="h">' + s.debut + ' → ' + s.fin + '</span><span class="n">' + W.esc(s.nom) + '</span>' +
-          (st.c === "live" || st.c === "soon" ? '<span class="pill ' + st.c + '">' + st.l + '</span>' : '') + '</a>'));
+        var c = W.el('<a class="card petit' + (st.c === "done" ? ' fini' : '') + '" href="' + W.lien("poste.html", {id:s.id}) + '">' +
+          '<div class="pt"><h3>' + W.esc(s.nom) + '</h3>' +
+          (st.c === "live" || st.c === "soon" ? '<span class="pill ' + st.c + '">' + st.l + '</span>' : '') + '</div>' +
+          '<div class="ph">' + s.debut + ' <span class="ar">→</span> ' + s.fin + '</div></a>');
+        c.style.borderLeftColor = st.c === "live" ? "var(--live)" : W.famille(s.nom).c;
+        app.appendChild(c);
       });
-      app.appendChild(box);
     }
 
     app.appendChild(W.el('<a class="btn ghost" href="' + W.lien("planning.html", {jour:jid}) + '">Planning de tout le monde</a>'));

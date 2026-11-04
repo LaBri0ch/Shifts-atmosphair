@@ -386,15 +386,13 @@ a{color:inherit}
 .sect b{color:var(--txt);font-size:.9rem}
 .sect em{font-style:normal;letter-spacing:.02em;text-transform:none;font-weight:700;font-size:.8rem}
 .sect.coll-t{margin-top:22px}
-.coll{border:2px dashed var(--line);border-radius:14px;margin-bottom:16px;overflow:hidden}
-.coll a{display:flex;align-items:center;gap:12px;padding:11px 14px;color:var(--txt);text-decoration:none;
-  border-top:1px solid var(--line)}
-.coll a:first-child{border-top:0}
-.coll a:active{background:var(--panel)}
-.coll a.fini{opacity:.5}
-.coll .h{flex:0 0 auto;min-width:104px;color:var(--dim);font-weight:800;font-size:.9rem;font-variant-numeric:tabular-nums}
-.coll .n{flex:1;min-width:0;font-weight:700;font-size:.95rem}
-.coll .pill{flex:0 0 auto}
+.card.petit{padding:11px 14px;margin-bottom:8px;border-left-width:6px;border-radius:12px}
+.card.petit .pt{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card.petit h3{font-size:1rem;margin:0;min-width:0}
+.card.petit .ph{font-size:1.02rem;font-weight:800;color:var(--dim);font-variant-numeric:tabular-nums;margin-top:3px}
+.card.petit .ph .ar{color:var(--dim2);font-weight:400}
+.card.petit .pill{flex:0 0 auto}
+.card.petit.fini{opacity:.5}
 .jour1{margin:2px 0 16px;color:var(--dim);font-weight:700;font-size:1rem}
 .jour1 b{color:var(--txt);font-variant-numeric:tabular-nums}
 .bdetabs button{flex:1;min-width:0;padding:11px 4px;border-radius:11px;border:2px solid var(--line);
