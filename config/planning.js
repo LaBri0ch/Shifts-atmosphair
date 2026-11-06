@@ -18,7 +18,7 @@
    ================================================================== */
 window.WEI_PLANNING = {
  "version": 3,
- "publie": "2026-11-04T14:47:50",
+ "publie": "2026-11-06T14:06:56",
  "event": {
   "nom": "Soirée Halloween",
   "lieu": ""
@@ -238,7 +238,7 @@ window.WEI_PLANNING = {
     "py48qfu",
     "pjzosw0",
     "pnfsyvt",
-    "p1m3uri"
+    "pgfqd55"
    ],
    "resps": [
     "pneqfzi"
@@ -311,7 +311,7 @@ window.WEI_PLANNING = {
    },
    "equipe": [
     "p3ql3o4",
-    "pgfqd55"
+    "p1m3uri"
    ]
   },
   {
